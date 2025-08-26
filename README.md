@@ -16,6 +16,9 @@
     python -m venv .venv_win
 ## Install dependencies
     pip install -r requirements.txt
+## Change python Interpreter
+    Ctrl + Shift + P → select virtual environment interpreter
+    Ctrl + Shift + P → Reload Window if necessary
 
 # Dev Environment Routine:
 ## Bash Activate Linux Virutal Environment:

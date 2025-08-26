@@ -2,7 +2,7 @@ import sqlite3
 import json
 import os
 
-DATABASE_FILE = "digital_toolbox.db"
+DATABASE_FILE = "dnd5e.db"
 
 def get_db_connection():
     """Establishes and returns a connection to the SQLite database."""
