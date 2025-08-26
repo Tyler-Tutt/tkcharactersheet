@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-from .toolbase import ToolBase
+from toolbase import ToolBase
 
 class CharacterSheet(ToolBase):
     """TTRPG Character Sheet Module"""
