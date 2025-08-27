@@ -1,23 +1,22 @@
 import tkinter as tk
 from tkinter import ttk, messagebox, simpledialog
+from ttkthemes import ThemedTk
 import os
 import sys # Access system-specific parameters
 import database # database.py file
 from database import UserPreferences
-from ttkthemes import ThemedTk
-
 from charactersheet import CharacterSheet
 
 # --- Configuration ---
 USER_DATA_DIR = "user_data"
 DEFAULT_USER = "default_user"
-DEFAULT_TOOL = None
+DEFAULT_PAGE = None
 
 # --- Main Application ---
 class App:
     def __init__(self, root):
         self.root = root
-        self.root.title("Digital Toolbox")
+        self.root.title("TK Character Sheet")
 
         self.root.set_theme("black")
 
@@ -35,7 +34,7 @@ class App:
         self.current_user = DEFAULT_USER
         self.user_prefs = UserPreferences(self.current_user)
 
-        self.current_tool_frame = None
+        self.current_page = None
 
         # --- Menu ---
         menubar = tk.Menu(root)
@@ -53,7 +52,7 @@ class App:
         # Tools Menu
         tools_menu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="Tools", menu=tools_menu)
-        tools_menu.add_command(label="Character Sheet", command=lambda: self.show_tool(CharacterSheet))
+        tools_menu.add_command(label="Character Sheet", command=lambda: self.show_page(CharacterSheet))
         
         # --- Status Bar ---
         self.status_bar = ttk.Label(root, text=f"Current User: {self.current_user}", relief=tk.SUNKEN, anchor=tk.W)
@@ -68,7 +67,7 @@ class App:
         self.main_content_frame.pack(fill="both", expand=True, padx=5, pady=5)
 
         # Show a default tool or welcome message
-        self.show_tool(DEFAULT_TOOL) # Show's a default Tool on startup
+        self.show_page(DEFAULT_PAGE) # Show's a default Tool on startup
 
     # The 'event=None' allows this method to be called by the keybinding 
     # (which sends an event object) and the menu (which doesn't).
@@ -85,27 +84,23 @@ class App:
         # sys.argv is the list of original command line arguments.
         os.execl(sys.executable, sys.executable, *sys.argv)
 
-    def show_tool(self, tool_class):
-        if self.current_tool_frame:
-            if hasattr(self.current_tool_frame, 'on_hide'):
-                self.current_tool_frame.on_hide()
-            self.current_tool_frame.destroy()
-            self.current_tool_frame = None # Ensure it's cleared
+    def show_page(self, page_class):
+        if self.current_page:
+            self.current_page.destroy()
+            self.current_page = None # Ensure it's cleared
 
-        # Instantiate the new tool, passing the app_controller (self)
-        self.current_tool_frame = tool_class(self.main_content_frame, self)
-        self.current_tool_frame.pack(fill="both", expand=True)
-        if hasattr(self.current_tool_frame, 'on_show'):
-            self.current_tool_frame.on_show()
+        # Instantiate the new page, passing the app_controller (self)
+        self.current_page = page_class(self.main_content_frame, self)
+        self.current_page.pack(fill="both", expand=True)
         
-        # Update window title or other app-level things based on tool
-        self.root.title(f"tkcharactersheet - {self.current_tool_frame.tool_name}")
+        # Update window title or other app-level things based on page
+        self.root.title(f"tkcharactersheet - {self.current_page.tool_name}")
 
 # --- Initiate tk loop ---
 if __name__ == "__main__":
     database.init_db()
 
-    DEFAULT_TOOL = CharacterSheet
+    DEFAULT_PAGE = CharacterSheet
 
     root = ThemedTk()
     app = App(root)
