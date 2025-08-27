@@ -14,7 +14,7 @@ DEFAULT_USER = "default_user"
 DEFAULT_TOOL = None
 
 # --- Main Application ---
-class DigitalToolboxApp:
+class App:
     def __init__(self, root):
         self.root = root
         self.root.title("Digital Toolbox")
@@ -85,33 +85,6 @@ class DigitalToolboxApp:
         # sys.argv is the list of original command line arguments.
         os.execl(sys.executable, sys.executable, *sys.argv)
 
-    def switch_user(self):
-        new_user = simpledialog.askstring("Switch User", "Enter username:", parent=self.root)
-        if new_user and new_user.strip():
-            if self.current_tool_frame and hasattr(self.current_tool_frame, 'on_hide'):
-                self.current_tool_frame.on_hide()
-            
-            self.user_prefs.close_connection()
-            self.current_user = new_user.strip()
-            self.user_prefs = UserPreferences(self.current_user)
-            
-            self.status_bar.config(text=f"Current User: {self.current_user}")
-            messagebox.showinfo("User Switched", f"Switched to user: {self.current_user}", parent=self.root)
-            
-            # Refresh current tool with new user's preferences or show default
-            if self.current_tool_frame:
-                tool_class = type(self.current_tool_frame)
-                self.show_tool(tool_class) # This re-instantiates the tool
-            else:
-                self.show_tool(CharacterSheet) # Or a default welcome screen
-
-            # Update settings menu variables to reflect new user's preferences
-            self.clock_format_var.set(self.user_prefs.get_preference("Clock", "format", "24h"))
-            self.clock_show_date_var.set(self.user_prefs.get_preference("Clock", "show_date", True))
-
-        elif new_user is not None: # User entered empty string
-            messagebox.showwarning("Invalid User", "Username cannot be empty.", parent=self.root)
-
     def show_tool(self, tool_class):
         if self.current_tool_frame:
             if hasattr(self.current_tool_frame, 'on_hide'):
@@ -126,7 +99,7 @@ class DigitalToolboxApp:
             self.current_tool_frame.on_show()
         
         # Update window title or other app-level things based on tool
-        self.root.title(f"Digital Toolbox - {self.current_tool_frame.tool_name}")
+        self.root.title(f"tkcharactersheet - {self.current_tool_frame.tool_name}")
 
 # --- Initiate tk loop ---
 if __name__ == "__main__":
@@ -135,5 +108,5 @@ if __name__ == "__main__":
     DEFAULT_TOOL = CharacterSheet
 
     root = ThemedTk()
-    app = DigitalToolboxApp(root)
+    app = App(root)
     root.mainloop()

@@ -3,7 +3,7 @@ from tkinter import ttk
 
 class ToolBase(tk.Frame):
     """Base class for all tools to inherit from."""
-    # master = DigitalToolBoxApp.main_content_frame, app_controller = DigitalToolBoxApp
+    # master = App.main_content_frame, app_controller = App
     def __init__(self, master, app_controller, tool_name, default_prefs=None):
         super().__init__(master)
         self.app_controller = app_controller

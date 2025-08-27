@@ -1,4 +1,4 @@
-# Windows & Linux Compatible Utility Application
+# Windows & Linux Compatible TTRPG Character Sheet
 - MacOS Not Supported
 
 # File Structure:

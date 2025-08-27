@@ -43,20 +43,29 @@ class CharacterSheet(ToolBase):
             "Intelligence", "Wisdom", "Charisma"
         ]
 
+        self.strengthScore = tk.IntVar(value=10)
+        self.strengthModifier = tk.IntVar(value=0)
+
+        strengthLabel = ttk.Label(statscontainer, text="Strength").grid(column=0, row=0)
+        strengthScore = ttk.Entry(statscontainer, textvariable=self.strengthScore).grid(column=1, row=0)
+        strengthMod = ttk.Label(statscontainer, textvariable=self.strengthModifier).grid(column=2, row=0)
+        
+        test = ttk.Label(statscontainer, textvariable=self.strengthScore).grid(column=0, row=1)
+
         # Loop through the stats to create a label and an entry for each
         # 'enumerate' gives us both the index (for the row) and the value
-        for i, stat_name in enumerate(character_stats):
-            # Create the label for the stat name
-            label = ttk.Label(statscontainer, text=f"{stat_name}:")
-            label.grid(column=0, row=i, sticky="ew", pady=2, padx=5)
+        # for i, stat_name in enumerate(character_stats):
+        #     # Create the label for the stat name
+        #     label = ttk.Label(statscontainer, text=f"{stat_name}:")
+        #     label.grid(column=0, row=i, sticky="ew", pady=2, padx=5)
 
-            # Create the number input widget (ttk.Entry)
-            entry = ttk.Entry(statscontainer, width=5)
-            entry.grid(column=1, row=i, sticky="ew", pady=2, padx=5)
+        #     # Create the number input widget (ttk.Entry)
+        #     entry = ttk.Entry(statscontainer, width=5)
+        #     entry.grid(column=1, row=i, sticky="ew", pady=2, padx=5)
 
-            # Modifier Column
-            label = ttk.Label(statscontainer, text="1")
-            label.grid(column=2, row=i, sticky="ew", pady=2, padx=5)
+        #     # Modifier Column
+        #     label = ttk.Label(statscontainer, text="1")
+        #     label.grid(column=2, row=i, sticky="ew", pady=2, padx=5)
         
         # --- Right Side Container ---
         rightsidecontainer = ttk.Frame(container, style="Right.TFrame", padding=10)
@@ -65,3 +74,5 @@ class CharacterSheet(ToolBase):
         # Example content for the right side
         right_label = ttk.Label(rightsidecontainer, text="Inventory / Notes")
         right_label.pack()
+
+        # def update_str_modifier(self, *args):
