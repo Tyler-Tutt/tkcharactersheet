@@ -49,10 +49,10 @@ class App:
         file_menu.add_separator()
         file_menu.add_command(label="Exit (Ctrl+Q)", command=self.quit_app)
 
-        # Tools Menu
-        tools_menu = tk.Menu(menubar, tearoff=0)
-        menubar.add_cascade(label="Tools", menu=tools_menu)
-        tools_menu.add_command(label="Character Sheet", command=lambda: self.show_page(CharacterSheet))
+        # Pages Menu
+        pages_menu = tk.Menu(menubar, tearoff=0)
+        menubar.add_cascade(label="Pages", menu=pages_menu)
+        pages_menu.add_command(label="Character Sheet", command=lambda: self.show_page(CharacterSheet))
         
         # --- Status Bar ---
         self.status_bar = ttk.Label(root, text=f"Current User: {self.current_user}", relief=tk.SUNKEN, anchor=tk.W)
@@ -66,8 +66,8 @@ class App:
         # padx & pady on the *Geometry Manager for the widget* control the 'Margin'
         self.main_content_frame.pack(fill="both", expand=True, padx=5, pady=5)
 
-        # Show a default tool or welcome message
-        self.show_page(DEFAULT_PAGE) # Show's a default Tool on startup
+        # Show's a default Page on startup
+        self.show_page(DEFAULT_PAGE)
 
     # The 'event=None' allows this method to be called by the keybinding 
     # (which sends an event object) and the menu (which doesn't).
@@ -87,14 +87,31 @@ class App:
     def show_page(self, page_class):
         if self.current_page:
             self.current_page.destroy()
-            self.current_page = None # Ensure it's cleared
+            self.current_page = None
 
-        # Instantiate the new page, passing the app_controller (self)
-        self.current_page = page_class(self.main_content_frame, self)
-        self.current_page.pack(fill="both", expand=True)
-        
-        # Update window title or other app-level things based on page
-        self.root.title(f"tkcharactersheet - {self.current_page.tool_name}")
+        if not page_class:
+            # This is a good check to have, just in case.
+            print("Debug: show_page was called with a None page_class.")
+            return
+
+        try:
+            # We will TRY to create the page.
+            self.current_page = page_class(self.main_content_frame, self)
+            self.current_page.pack(fill="both", expand=True)
+            self.root.title(f"tkcharactersheet - {self.current_page.page_name}")
+            print(f"Debug: Successfully displayed page: {page_class.__name__}")
+
+        except Exception as e:
+            # If ANYTHING goes wrong inside the try block, this code will run.
+            # This is our safety net.
+            messagebox.showerror(
+                "Page Load Error",
+                f"Failed to load the page: {page_class.__name__}\n\n"
+                f"Error: {e}"
+            )
+            print(f"!!! FAILED TO LOAD PAGE: {page_class.__name__} !!!")
+            import traceback
+            traceback.print_exc() # This prints the full, detailed error message.
 
 # --- Initiate tk loop ---
 if __name__ == "__main__":

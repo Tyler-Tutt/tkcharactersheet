@@ -1,8 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
-from toolbase import ToolBase
+from pagebase import PageBase
 
-class CharacterSheet(ToolBase):
+class CharacterSheet(PageBase):
     """TTRPG Character Sheet Module"""
     def __init__(self, master, app_controller):
         super().__init__(master, app_controller, "Character Sheet")

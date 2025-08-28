@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-from ..toolbase import ToolBase
+from ..pagebase import ToolBase
 
 class StatCalculator(ToolBase):
     """A tool to demonstrate real-time UI updates without a button press."""

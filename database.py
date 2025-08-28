@@ -1,13 +1,13 @@
 import sqlite3
 import json
-# import os
 
 DATABASE_FILE = "dnd5e.db"
 
 def get_db_connection():
     """Establishes and returns a connection to the SQLite database."""
     conn = sqlite3.connect(DATABASE_FILE)
-    # This allows you to access columns by name
+    
+    # Allows access to columns by name
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -32,7 +32,6 @@ def init_db():
     conn.commit()
     conn.close()
 
-# --- UserPreferences now lives in the database module ---
 class UserPreferences:
     def __init__(self, username):
         self.username = username
@@ -66,26 +65,25 @@ class UserPreferences:
             self.conn.commit()
             return default_prefs
 
-    # --- NEW METHOD ---
-    def get_tool_preferences(self, tool_name, default_prefs=None):
-        """Gets the entire preference dictionary for a specific tool."""
+    def get_page_preferences(self, page_name, default_prefs=None):
+        """Gets the entire preference dictionary for a specific page."""
         if default_prefs is None:
             default_prefs = {}
-        # Get the sub-dictionary for the tool, or return the default if not found.
-        return self.preferences.get(tool_name, default_prefs)
+        # Get the sub-dictionary for the page, or return the default if not found.
+        return self.preferences.get(page_name, default_prefs)
 
-    def get_preference(self, tool_name, key, default=None):
-        """Gets a specific preference value from within a tool's preferences."""
-        # Get the tool's preference dictionary first
-        tool_prefs = self.preferences.get(tool_name, {})
+    def get_preference(self, page_name, key, default=None):
+        """Gets a specific preference value from within a page's preferences."""
+        # Get the page's preference dictionary first
+        page_prefs = self.preferences.get(page_name, {})
         # Then get the specific key from that dictionary
-        return tool_prefs.get(key, default)
+        return page_prefs.get(key, default)
 
-    def set_preference(self, tool_name, key, value):
+    def set_preference(self, page_name, key, value):
         """Sets a specific preference value and saves it to the database."""
-        if tool_name not in self.preferences:
-            self.preferences[tool_name] = {}
-        self.preferences[tool_name][key] = value
+        if page_name not in self.preferences:
+            self.preferences[page_name] = {}
+        self.preferences[page_name][key] = value
         
         # Save the entire updated preferences dictionary back to the DB
         prefs_json = json.dumps(self.preferences)
