@@ -90,7 +90,6 @@ class App:
             self.current_page = None
 
         if not page_class:
-            # This is a good check to have, just in case.
             print("Debug: show_page was called with a None page_class.")
             return
 
@@ -99,11 +98,11 @@ class App:
             self.current_page = page_class(self.main_content_frame, self)
             self.current_page.pack(fill="both", expand=True)
             self.root.title(f"tkcharactersheet - {self.current_page.page_name}")
+
             print(f"Debug: Successfully displayed page: {page_class.__name__}")
 
         except Exception as e:
             # If ANYTHING goes wrong inside the try block, this code will run.
-            # This is our safety net.
             messagebox.showerror(
                 "Page Load Error",
                 f"Failed to load the page: {page_class.__name__}\n\n"
