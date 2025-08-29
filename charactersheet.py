@@ -48,9 +48,11 @@ class CharacterSheet(PageBase):
             # Create the variables for this stat
             score_var = tk.IntVar(value=10)
             modifier_var = tk.StringVar(value="+0")
+            print(f"Debug: i: {i} | stat_name: {stat_name}")
 
             # Store the variables in our dictionary using the stat name as the key
             self.stat_vars[stat_name] = {"score": score_var, "modifier": modifier_var}
+            print(f"Debug: score: {self.stat_vars[stat_name]['score'].get()} || modifier: {self.stat_vars[stat_name]['modifier'].get()}")
 
             # Set up the trace using a lambda that passes these specific variables
             # We use default arguments in the lambda (s=score_var) to "capture" the
@@ -68,22 +70,6 @@ class CharacterSheet(PageBase):
             # Immediately calculate the initial modifier
             self.update_modifier(score_var, modifier_var)
 
-        # # --- Setup Stat Variables ---
-        # self.strengthScore = tk.IntVar(value=10)
-        # self.strengthModifier = tk.StringVar(value="+0")
-        # self.strengthScore.trace_add("write", lambda *args: self.update_modifier(self.strengthScore, self.strengthModifier))
-        # self.dexterityScore = tk.IntVar(value=10)
-        # self.dexterityModifier = tk.StringVar(value="+0")
-        # self.dexterityScore.trace_add("write", lambda *args: self.update_modifier(self.dexterityScore, self.dexterityModifier))
-
-        # # --- Create Stat Widgets ---
-        # strengthLabel = ttk.Label(statscontainer, text="Strength").grid(column=0, row=0)
-        # strengthScore = ttk.Entry(statscontainer, textvariable=self.strengthScore).grid(column=1, row=0)
-        # strengthMod = ttk.Label(statscontainer, textvariable=self.strengthModifier).grid(column=2, row=0)
-        # dexterityLabel = ttk.Label(statscontainer, text="Dexterity").grid(column=0, row=1)
-        # dexterityScore = ttk.Entry(statscontainer, textvariable=self.dexterityScore).grid(column=1, row=1)
-        # dexterityMod = ttk.Label(statscontainer, textvariable=self.dexterityModifier).grid(column=2, row=1)
-        
         # --- Right Side Container ---
         rightsidecontainer = ttk.Frame(container, style="Right.TFrame", padding=10)
         rightsidecontainer.grid(column=1, row=0, sticky="nsew", padx=(5, 0))
