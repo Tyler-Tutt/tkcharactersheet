@@ -70,6 +70,9 @@ class CharacterSheet(PageBase):
             # Immediately calculate the initial modifier
             self.update_modifier(score_var, modifier_var)
 
+        for statname, statdata in self.stat_vars.items():
+            print(f"stat: {statname}, score: {statdata["score"].get()}, modifier: {statdata["modifier"].get()}")
+
         # --- Right Side Container ---
         rightsidecontainer = ttk.Frame(container, style="Right.TFrame", padding=10)
         rightsidecontainer.grid(column=1, row=0, sticky="nsew", padx=(5, 0))
