@@ -27,6 +27,9 @@ class CharacterSheet(PageBase):
         container.columnconfigure(1, weight=3) # Right side column (takes up more space)
         container.rowconfigure(0, weight=1)
 
+        # --- Top Pane: Character Background ---
+        backgroundcontainer = ttk.Frame(container)
+
         # --- Left Side: Stats Container ---
         statscontainer = ttk.Frame(container, style="Stats.TFrame", padding=10)
         statscontainer.grid(column=0, row=0, sticky="new", padx=(0, 5))
@@ -37,22 +40,23 @@ class CharacterSheet(PageBase):
         statscontainer.columnconfigure(2, weight=1) # Modifier column
 
         # --- Create the Stats Table ---
-        self.stat_vars = {}
         character_stats = [
             "Strength", "Dexterity", "Constitution",
             "Intelligence", "Wisdom", "Charisma"
         ]
+
+        # --- Create empty Dictionary that will hold stat Scores & Modifiers ---
+        self.stat_vars = {}
 
         # 'enumerate' gives us both the index (for the row) and the stat name
         for i, stat_name in enumerate(character_stats):
             # Create the variables for this stat
             score_var = tk.IntVar(value=10)
             modifier_var = tk.StringVar(value="+0")
-            print(f"Debug: i: {i} | stat_name: {stat_name}")
 
             # Store the variables in our dictionary using the stat name as the key
             self.stat_vars[stat_name] = {"score": score_var, "modifier": modifier_var}
-            print(f"Debug: score: {self.stat_vars[stat_name]['score'].get()} || modifier: {self.stat_vars[stat_name]['modifier'].get()}")
+            # print(f"Debug: score: {self.stat_vars[stat_name]['score'].get()} || modifier: {self.stat_vars[stat_name]['modifier'].get()}")
 
             # Set up the trace using a lambda that passes these specific variables
             # We use default arguments in the lambda (s=score_var) to "capture" the
@@ -83,8 +87,8 @@ class CharacterSheet(PageBase):
 
     def update_modifier(self, stat_score, modifier_score):
         """
-        Calculates a modifier based on the score from 'score_variable'
-        and updates the text of 'modifier_variable'.
+        Calculates a modifier based on the score from 'stat_score'
+        and updates the text of 'modifier_score'.
         """
         try:
             score = stat_score.get()
@@ -96,6 +100,7 @@ class CharacterSheet(PageBase):
                 result = str(modifier)
                 
             modifier_score.set(result)
+            print(f"{result}")
 
         except tk.TclError:
             # This handles the case where the entry box is empty
