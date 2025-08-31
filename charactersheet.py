@@ -15,9 +15,12 @@ class CharacterSheet(PageBase):
         # --- Style Configuration ---
         # Using more subtle colors for better readability
         style = ttk.Style()
-        style.configure('Background.TFrame', background="#AD1919") # Main container
+        style.configure('Background.TFrame', background="#AD1919", relief='solid', borderwidth=4) # Main container
         style.configure('Stats.TFrame', background="#580DAD") # Left side
         style.configure('Right.TFrame', background="#379611") # Right side
+        print(style.lookup("Background.TFrame", "borderwidth"))
+        print(style.lookup("Background.TFrame", "relief"))
+
 
         # --- Main Container Frame ---
         container = ttk.Frame(self, style="Background.TFrame", padding=10)

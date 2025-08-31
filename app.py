@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox, simpledialog
-from ttkthemes import ThemedTk
+# from ttkthemes import ThemedTk # Third-party library that extends ttk
 import os
 import sys # Access system-specific parameters
 import database # database.py file
@@ -18,7 +18,9 @@ class App:
         self.root = root
         self.root.title("TK Character Sheet")
 
-        self.root.set_theme("black")
+        # --- Set theme globally during app startup ---
+        self.style = ttk.Style()
+        self.style.theme_use('classic')
 
         # This line tells Tkinter to call our custom quit_app function
         # whenever the user clicks the 'X' button on the window.
@@ -59,12 +61,11 @@ class App:
         self.status_bar.pack(side=tk.BOTTOM, fill=tk.X)
 
         # --- Main content area ---
-        # padding & borderwidth on the *frame widget* control the 'padding' & 'border' (Box Model)
-        style = ttk.Style()
-        style.configure("maincontentframe.TFrame", background="#f6ff00")
-        self.main_content_frame = ttk.Frame(root, borderwidth=3, relief="groove", style="maincontentframe.TFrame")
-        # padx & pady on the *Geometry Manager for the widget* control the 'Margin'
-        self.main_content_frame.pack(fill="both", expand=True, padx=5, pady=5)
+        self.style.configure("maincontentframe.TFrame", background="#f6ff00", borderwidth=3, relief='solid')
+        # padding & borderwidth on the *frame widget/style* control the 'padding' & 'border' (Box Model)
+        self.main_content_frame = ttk.Frame(root, padding=5, style="maincontentframe.TFrame")
+        # padx & pady on the *Geometry Manager* FOR the widget control the 'Margin'
+        self.main_content_frame.pack(fill="both", expand=True, padx=3, pady=3)
 
         # Show's a default Page on startup
         self.show_page(DEFAULT_PAGE)
@@ -85,6 +86,7 @@ class App:
         os.execl(sys.executable, sys.executable, *sys.argv)
 
     def show_page(self, page_class):
+        """Ensures Page to be shown/displayed correctly triggers"""
         if self.current_page:
             self.current_page.destroy()
             self.current_page = None
@@ -118,6 +120,6 @@ if __name__ == "__main__":
 
     DEFAULT_PAGE = CharacterSheet
 
-    root = ThemedTk()
+    root = tk.Tk()
     app = App(root)
     root.mainloop()

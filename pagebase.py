@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 
-class PageBase(tk.Frame):
+class PageBase(ttk.Frame):
     """Base class for all pages to inherit from."""
     # master = App.main_content_frame, app_controller = App
     def __init__(self, master, app_controller, page_name, default_prefs=None):
