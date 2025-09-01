@@ -13,14 +13,11 @@ class CharacterSheet(PageBase):
         self.rowconfigure(0, weight=1)
 
         # --- Style Configuration ---
-        # Using more subtle colors for better readability
         style = ttk.Style()
         style.configure('Background.TFrame', background="#AD1919", relief='solid', borderwidth=4) # Main container
         style.configure('Stats.TFrame', background="#580DAD") # Left side
         style.configure('Right.TFrame', background="#379611") # Right side
-        print(style.lookup("Background.TFrame", "borderwidth"))
-        print(style.lookup("Background.TFrame", "relief"))
-
+        style.configure('characterbackgroundframe.TFrame', background="#119682") # Right side
 
         # --- Main Container Frame ---
         container = ttk.Frame(self, style="Background.TFrame", padding=10)
@@ -28,19 +25,47 @@ class CharacterSheet(PageBase):
 
         container.columnconfigure(0, weight=1) # Left side column
         container.columnconfigure(1, weight=3) # Right side column (takes up more space)
-        container.rowconfigure(0, weight=1)
+        container.rowconfigure(0, weight=0) # Character Background Frame Row
+        container.rowconfigure(1, weight=1) 
 
         # --- Top Pane: Character Background ---
-        backgroundcontainer = ttk.Frame(container)
+        charbackgroundframe = ttk.Frame(container, style="characterbackgroundframe.TFrame", padding=5)
+        charbackgroundframe.grid(column=0, row=0, columnspan=2, sticky='ew', pady=(0, 10))
 
-        # --- Left Side: Stats Container ---
-        statscontainer = ttk.Frame(container, style="Stats.TFrame", padding=10)
-        statscontainer.grid(column=0, row=0, sticky="new", padx=(0, 5))
+        charbackgroundframe.columnconfigure(0, weight=1)
+        charbackgroundframe.columnconfigure(1, weight=2)
+        charbackgroundframe.rowconfigure(0, weight=1)
+
+        characternameframe = ttk.Frame(charbackgroundframe)
+        characternameframe.grid(column=0, row=0, sticky='ew')
+        characternameframe.columnconfigure(0, weight=1)
+        characternameframe.rowconfigure(0, weight=1)
+        self.charactername = tk.StringVar(value="Character Name")
+        ttk.Entry(characternameframe, textvariable=self.charactername).grid(column=0, row=0, sticky='ew')
+
+        backgroundinfoframe = ttk.Frame(charbackgroundframe)
+        backgroundinfoframe.grid(column=1, row=0, sticky='ew')
+        backgroundinfoframe.columnconfigure(0, weight=1)
+        backgroundinfoframe.columnconfigure(1, weight=1)
+        backgroundinfoframe.columnconfigure(2, weight=1)
+        backgroundinfoframe.rowconfigure(0, weight=1)
+        backgroundinfoframe.rowconfigure(1, weight=1)
+        self.classlevel = tk.StringVar(value="Artificer 1")
+        ttk.Entry(backgroundinfoframe, textvariable=self.classlevel).grid(column=0, row=0, sticky='ew')
+        ttk.Entry(backgroundinfoframe, text="Background").grid(column=1, row=0, sticky='ew')
+        ttk.Entry(backgroundinfoframe, text="Player Name").grid(column=2, row=0, sticky='ew')
+        ttk.Entry(backgroundinfoframe, text="Race").grid(column=0, row=1, sticky='ew')
+        ttk.Entry(backgroundinfoframe, text="Alignment").grid(column=1, row=1, sticky='ew')
+        ttk.Entry(backgroundinfoframe, text="Experience Points").grid(column=2, row=1, sticky='ew')
+
+        # --- Left Side: Stats Frame ---
+        statsframe = ttk.Frame(container, style="Stats.TFrame", padding=10)
+        statsframe.grid(column=0, row=1, sticky="new", padx=(0, 5))
         
-        # Configure the grid inside the stats container to create the table
-        statscontainer.columnconfigure(0, weight=1) # Label column
-        statscontainer.columnconfigure(1, weight=1) # Point column
-        statscontainer.columnconfigure(2, weight=1) # Modifier column
+        # Configure the grid inside the stats frame to create the table
+        statsframe.columnconfigure(0, weight=1) # Label column
+        statsframe.columnconfigure(1, weight=1) # Point column
+        statsframe.columnconfigure(2, weight=1) # Modifier column
 
         # --- Create the Stats Table ---
         character_stats = [
@@ -70,9 +95,9 @@ class CharacterSheet(PageBase):
             )
 
             # Create and grid the widgets using the loop index 'i' for the row
-            ttk.Label(statscontainer, text=stat_name).grid(column=0, row=i, sticky="w", pady=2)
-            ttk.Entry(statscontainer, textvariable=score_var, width=5).grid(column=1, row=i, pady=2)
-            ttk.Label(statscontainer, textvariable=modifier_var).grid(column=2, row=i, pady=2)
+            ttk.Label(statsframe, text=stat_name).grid(column=0, row=i, sticky="w", pady=2)
+            ttk.Entry(statsframe, textvariable=score_var, width=5).grid(column=1, row=i, pady=2)
+            ttk.Label(statsframe, textvariable=modifier_var).grid(column=2, row=i, pady=2)
 
             # Immediately calculate the initial modifier
             self.update_modifier(score_var, modifier_var)
@@ -80,12 +105,12 @@ class CharacterSheet(PageBase):
         for statname, statdata in self.stat_vars.items():
             print(f"stat: {statname}, score: {statdata["score"].get()}, modifier: {statdata["modifier"].get()}")
 
-        # --- Right Side Container ---
-        rightsidecontainer = ttk.Frame(container, style="Right.TFrame", padding=10)
-        rightsidecontainer.grid(column=1, row=0, sticky="nsew", padx=(5, 0))
+        # --- Right Side Frame ---
+        rightsideframe = ttk.Frame(container, style="Right.TFrame", padding=10)
+        rightsideframe.grid(column=1, row=1, sticky="nsew", padx=(5, 0))
         
         # Example content for the right side
-        right_label = ttk.Label(rightsidecontainer, text="Inventory / Notes")
+        right_label = ttk.Label(rightsideframe, text="Inventory / Notes")
         right_label.pack()
 
     def update_modifier(self, stat_score, modifier_score):
