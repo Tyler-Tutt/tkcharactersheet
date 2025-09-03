@@ -83,7 +83,7 @@ class CharacterSheet(PageBase):
         statsframe = ttk.Frame(container, style="Stats.TFrame", padding=10)
         statsframe.grid(column=0, row=1, sticky="nsew", padx=(0, 5))
         
-        # 9x2 Table
+        # 9x2 Table for Stats
         statsframe.columnconfigure(0, weight=1)
         statsframe.columnconfigure(1, weight=1)
         statsframe.rowconfigure(0, weight=1)
@@ -97,20 +97,32 @@ class CharacterSheet(PageBase):
         statsframe.rowconfigure(8, weight=1)
 
         # --- Proficieny & Inspiration ---
+
         self.proficieny_bonus = tk.IntVar(value=0)
         self.inspiration = tk.BooleanVar()
-        ttk.Entry(statsframe, textvariable=self.proficieny_bonus).grid(column=0, row=0, sticky='ew')
+        ttk.Entry(statsframe, textvariable=self.proficieny_bonus).grid(column=0, row=0, sticky='ew', pady=2)
         ttk.Label(statsframe, text="Proficiency Bonus").grid(column=1, row=0, sticky='ew')
-        ttk.Checkbutton(statsframe, text="Inspiration", variable=self.inspiration).grid(column=0, row=1, columnspan=2, sticky='ew')
+        ttk.Checkbutton(statsframe, text="Inspiration", variable=self.inspiration).grid(column=0, row=1, columnspan=2, sticky='ew', pady=2)
 
-        # --- Create the Stats Table ---
+        # --- Create Stats Table ---
         character_stats = [
             "Strength", "Dexterity", "Constitution",
             "Intelligence", "Wisdom", "Charisma"
         ]
 
+        # --- Create Skills Dictionary ---
+        character_skills = {
+            "Strength": ["Athletics"],
+            "Dexterity": ["Acrobatics", "Sleight of Hand", "Stealth"], 
+            "Constitution": [],
+            "Intelligence": ["Arcana", "History", "Investigation", "Nature", "Religion"],
+            "Wisdom": ["Animal Handling", "Insight", "Medicine", "Perception", "Survival"],
+            "Charisma": ["Deception", "Intimidation", "Performance", "Persuasion"]
+        }
+
         # --- Create empty Dictionary that will hold stat Scores & Modifiers ---
         self.stat_vars = {}
+        self.stat_frames = {}
 
         # 'enumerate' gives us both the index (for the row) and the stat name
         for i, stat_name in enumerate(character_stats):
@@ -130,10 +142,17 @@ class CharacterSheet(PageBase):
                 lambda *args, s=score_var, m=modifier_var: self.update_modifier(s, m)
             )
 
+            frame_key = f"{stat_name}_frame"
+            new_frame = ttk.Frame(statsframe)
+            new_frame.grid(column=0, row=i+2, sticky="ew", columnspan=3)
+            self.stat_frames[frame_key] = new_frame
+            ttk.Label(self.stat_frames[frame_key], text=f"Content for {stat_name}").pack()
+
+
             # Create and grid the stat widgets using the loop index 'i' for the row
             ttk.Label(statsframe, text=stat_name).grid(column=0, row=i+2, sticky="w", pady=2)
-            ttk.Entry(statsframe, textvariable=score_var, width=5).grid(column=1, row=i+2, pady=2)
-            ttk.Label(statsframe, textvariable=modifier_var).grid(column=2, row=i+2, pady=2)
+            ttk.Entry(statsframe, textvariable=score_var, width=5).grid(column=1, row=i+2, sticky="w", pady=2)
+            ttk.Label(statsframe, textvariable=modifier_var).grid(column=1, row=i+2, sticky="e", pady=2)
 
             # Immediately calculate initial modifier values
             self.update_modifier(score_var, modifier_var)
@@ -142,7 +161,7 @@ class CharacterSheet(PageBase):
             print(f"stat: {statname}, score: {statdata["score"].get()}, modifier: {statdata["modifier"].get()}")
 
         self.passive_perception = tk.IntVar(value=0)
-        ttk.Entry(statsframe, textvariable=self.passive_perception).grid(column=0, row=8, sticky='ew')
+        ttk.Entry(statsframe, textvariable=self.passive_perception).grid(column=0, row=8, sticky='ew', pady=2)
         ttk.Label(statsframe, text="Passive Perception").grid(column=1, row=8, sticky='ew')
 
         # --- Right Side Frame ---
