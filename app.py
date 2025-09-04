@@ -96,7 +96,7 @@ class App:
             return
 
         try:
-            # We will TRY to create the page.
+            # TRY to create the page.
             self.current_page = page_class(self.main_content_frame, self)
             self.current_page.pack(fill="both", expand=True)
             self.root.title(f"tkcharactersheet - {self.current_page.page_name}")
@@ -121,5 +121,6 @@ if __name__ == "__main__":
     DEFAULT_PAGE = CharacterSheet
 
     root = tk.Tk()
+    root.state('zoomed')
     app = App(root)
     root.mainloop()

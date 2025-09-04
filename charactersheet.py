@@ -18,6 +18,7 @@ class CharacterSheet(PageBase):
         style.configure('Stats.TFrame', background="#580DAD") # Left side
         style.configure('Right.TFrame', background="#379611") # Right side
         style.configure('characterbackgroundframe.TFrame', background="#119682") # Right side
+        style.configure('statframe.TFrame', background="#116A96") # Stat Frames
 
         # --- Main Container Frame (3x3 Table) ---
         container = ttk.Frame(self, style="Background.TFrame", padding=10)
@@ -120,7 +121,7 @@ class CharacterSheet(PageBase):
             "Charisma": ["Deception", "Intimidation", "Performance", "Persuasion"]
         }
 
-        # --- Create empty Dictionary that will hold stat Scores & Modifiers ---
+        # --- Create empty Dictionaries that will hold stat Scores & Modifiers ---
         self.stat_vars = {}
         self.stat_frames = {}
 
@@ -142,17 +143,35 @@ class CharacterSheet(PageBase):
                 lambda *args, s=score_var, m=modifier_var: self.update_modifier(s, m)
             )
 
+            # --- Create 6x4 Table Child Frames for each Stat ---
             frame_key = f"{stat_name}_frame"
-            new_frame = ttk.Frame(statsframe)
-            new_frame.grid(column=0, row=i+2, sticky="ew", columnspan=3)
+            new_frame = ttk.Frame(statsframe, style='statframe.TFrame')
+            new_frame.grid(column=0, row=i+2, sticky="ew", columnspan=3, pady=2)
+            new_frame.columnconfigure(0, weight=2)
+            new_frame.columnconfigure(1, weight=1)
+            new_frame.columnconfigure(2, weight=1)
+            new_frame.columnconfigure(3, weight=2)
+            new_frame.rowconfigure(0, weight=1)
+            new_frame.rowconfigure(1, weight=1)
+            new_frame.rowconfigure(2, weight=1)
+            new_frame.rowconfigure(3, weight=1)
+            new_frame.rowconfigure(4, weight=1)
+            new_frame.rowconfigure(5, weight=1)
+            # Adds current Stat in Loop to stat_frames dictionary
             self.stat_frames[frame_key] = new_frame
-            ttk.Label(self.stat_frames[frame_key], text=f"Content for {stat_name}").pack()
 
+            # Stat Label, Score, and Modifier Score
+            ttk.Label(self.stat_frames[frame_key], text=stat_name).grid(column=0, row=0, sticky="nsew", pady=2)
+            ttk.Entry(self.stat_frames[frame_key], textvariable=score_var, width=5).grid(column=0, row=1, sticky="w", pady=2)
+            ttk.Label(self.stat_frames[frame_key], textvariable=modifier_var).grid(column=0, row=2, sticky="w", pady=2)
 
-            # Create and grid the stat widgets using the loop index 'i' for the row
-            ttk.Label(statsframe, text=stat_name).grid(column=0, row=i+2, sticky="w", pady=2)
-            ttk.Entry(statsframe, textvariable=score_var, width=5).grid(column=1, row=i+2, sticky="w", pady=2)
-            ttk.Label(statsframe, textvariable=modifier_var).grid(column=1, row=i+2, sticky="e", pady=2)
+            # Proficiency Checkbox, Skill Score, Skill Name
+            ttk.Checkbutton(self.stat_frames[frame_key]).grid(column=1, row=0)
+            ttk.Entry(self.stat_frames[frame_key]).grid(column=2, row=0)
+            ttk.Label(self.stat_frames[frame_key], text="Saving Throw").grid(column=3, row=0)
+            ttk.Label(self.stat_frames[frame_key], text="Saving Throw").grid(column=3, row=1)
+            ttk.Label(self.stat_frames[frame_key], text="Saving Throw").grid(column=3, row=2)
+            ttk.Label(self.stat_frames[frame_key], text="Saving Throw").grid(column=3, row=3)
 
             # Immediately calculate initial modifier values
             self.update_modifier(score_var, modifier_var)
