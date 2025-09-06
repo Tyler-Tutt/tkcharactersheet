@@ -124,7 +124,7 @@ class CharacterSheet(PageBase):
 
         # --- Create empty Dictionaries that will hold stat Scores & Modifiers ---
         self.abilitiescore_vars = {}
-        self.abilitiescoreframes = {}
+        self.abilityscoreframes = {}
 
         # 'enumerate' gives both the index (for the row) and the stat name
         for i, ability in enumerate(abilities):
@@ -146,31 +146,31 @@ class CharacterSheet(PageBase):
 
             # --- Create 6x4 Table Child Frames for each Ability Score ---
             frame_key = f"{ability}_frame"
-            abilitiescoreframe = ttk.Frame(stats_frame, style='abilityscore.TFrame')
-            abilitiescoreframe.grid(column=0, row=i+2, sticky="ew", columnspan=3, pady=2)
-            abilitiescoreframe.columnconfigure(0, weight=2)
-            abilitiescoreframe.columnconfigure(1, weight=1)
-            abilitiescoreframe.columnconfigure(2, weight=1)
-            abilitiescoreframe.columnconfigure(3, weight=2)
-            abilitiescoreframe.rowconfigure(0, weight=1)
-            abilitiescoreframe.rowconfigure(1, weight=1)
-            abilitiescoreframe.rowconfigure(2, weight=1)
-            abilitiescoreframe.rowconfigure(3, weight=1)
-            abilitiescoreframe.rowconfigure(4, weight=1)
-            abilitiescoreframe.rowconfigure(5, weight=1)
-            # Adds current Ability Score in Loop to abilitiescoreframes dictionary
-            self.abilitiescoreframes[frame_key] = abilitiescoreframe
+            score_frame = ttk.Frame(stats_frame, style='abilityscore.TFrame')
+            score_frame.grid(column=0, row=i+2, sticky="ew", columnspan=3, pady=2)
+            score_frame.columnconfigure(0, weight=2)
+            score_frame.columnconfigure(1, weight=1)
+            score_frame.columnconfigure(2, weight=1)
+            score_frame.columnconfigure(3, weight=2)
+            score_frame.rowconfigure(0, weight=1)
+            score_frame.rowconfigure(1, weight=1)
+            score_frame.rowconfigure(2, weight=1)
+            score_frame.rowconfigure(3, weight=1)
+            score_frame.rowconfigure(4, weight=1)
+            score_frame.rowconfigure(5, weight=1)
+            # Adds current Ability Score in Loop to abilityscoreframes dictionary
+            self.abilityscoreframes[frame_key] = score_frame
 
             # Stat Label, Score, and Modifier Score
-            ttk.Label(self.abilitiescoreframes[frame_key], text=ability).grid(column=0, row=0, sticky="w", pady=2)
-            ttk.Entry(self.abilitiescoreframes[frame_key], textvariable=score_var, width=5).grid(column=0, row=1, sticky="w", pady=2)
-            ttk.Label(self.abilitiescoreframes[frame_key], textvariable=modifier_var).grid(column=0, row=2, sticky="w", pady=2)
+            ttk.Label(self.abilityscoreframes[frame_key], text=ability).grid(column=0, row=0, sticky="w", pady=2)
+            ttk.Entry(self.abilityscoreframes[frame_key], textvariable=score_var, width=5).grid(column=0, row=1, sticky="w", pady=2)
+            ttk.Label(self.abilityscoreframes[frame_key], textvariable=modifier_var).grid(column=0, row=2, sticky="w", pady=2)
 
-            # Proficiency Checkbox, Skill Score, Skill Name
+            # Proficiency Checkboxes, Sill Scores, Skill Names
             for j, skill in enumerate(character_skills[ability]):
-                ttk.Checkbutton(self.abilitiescoreframes[frame_key]).grid(column=1, row=j, pady=2)
-                ttk.Entry(self.abilitiescoreframes[frame_key]).grid(column=2, row=j, pady=2)
-                ttk.Label(self.abilitiescoreframes[frame_key], text=skill).grid(column=3, row=j, pady=2)
+                ttk.Checkbutton(self.abilityscoreframes[frame_key]).grid(column=1, row=j, pady=2)
+                ttk.Entry(self.abilityscoreframes[frame_key]).grid(column=2, row=j, pady=2)
+                ttk.Label(self.abilityscoreframes[frame_key], text=skill).grid(column=3, row=j, pady=2)
 
             # Immediately calculate initial modifier values
             self.update_modifier(score_var, modifier_var)
