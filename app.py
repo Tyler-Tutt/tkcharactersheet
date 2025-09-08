@@ -61,11 +61,40 @@ class App:
         self.status_bar.pack(side=tk.BOTTOM, fill=tk.X)
 
         # --- Main content area ---
+        # This frame will hold the canvas and the scrollbar
         self.style.configure("maincontentframe.TFrame", background="#f6ff00", borderwidth=3, relief='solid')
-        # padding & borderwidth on the *frame widget/style* control the 'padding' & 'border' (Box Model)
-        self.main_content_frame = ttk.Frame(root, padding=5, style="maincontentframe.TFrame")
-        # padx & pady on the *Geometry Manager* FOR the widget control the 'Margin'
-        self.main_content_frame.pack(fill="both", expand=True, padx=3, pady=3)
+        canvas_container = ttk.Frame(root, padding=5, style="maincontentframe.TFrame")
+        canvas_container.pack(fill="both", expand=True, padx=3, pady=3)
+        canvas_container.rowconfigure(0, weight=1)
+        canvas_container.columnconfigure(0, weight=1)
+
+        # Create canvas and scrollbar
+        self.canvas = tk.Canvas(canvas_container)
+        scrollbar = ttk.Scrollbar(canvas_container, orient="vertical", command=self.canvas.yview)
+        
+        # Configure canvas
+        self.canvas.configure(yscrollcommand=scrollbar.set)
+        
+        # This is the frame that will hold the actual page content.
+        # It lives inside the canvas.
+        self.main_content_frame = ttk.Frame(self.canvas)
+        
+        # Place canvas and scrollbar using grid
+        self.canvas.grid(row=0, column=0, sticky="nsew")
+        scrollbar.grid(row=0, column=1, sticky="ns")
+        
+        # Create canvas window to hold the main_content_frame
+        self.canvas_window = self.canvas.create_window(
+            (0, 0), 
+            window=self.main_content_frame, 
+            anchor="nw"
+        )
+        
+        # Bind events for scrolling and resizing
+        self.main_content_frame.bind('<Configure>', self._on_frame_configure)
+        self.canvas.bind('<Configure>', self._on_canvas_configure)
+        # Use bind_all to catch the mousewheel event anywhere in the app
+        self.root.bind_all("<MouseWheel>", self._on_mousewheel)
 
         # Show's a default Page on startup
         self.show_page(DEFAULT_PAGE)
@@ -84,6 +113,21 @@ class App:
         # sys.executable is the path to the current Python interpreter.
         # sys.argv is the list of original command line arguments.
         os.execl(sys.executable, sys.executable, *sys.argv)
+
+    def _on_canvas_configure(self, event):
+        """Handle canvas resize"""
+        # Update the width of the frame inside the canvas to match the canvas
+        self.canvas.itemconfig(self.canvas_window, width=event.width)
+
+    def _on_frame_configure(self, event=None):
+        """Reset the scroll region to encompass the inner frame"""
+        # Update scroll region to content size
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+
+    def _on_mousewheel(self, event):
+        """Handle mouse wheel scrolling"""
+        # The division by 120 is for Windows to normalize scroll speed
+        self.canvas.yview_scroll(int(-1*(event.delta/120)), "units")
 
     def show_page(self, page_class):
         """Ensures Page to be shown/displayed correctly triggers"""

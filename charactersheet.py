@@ -8,40 +8,6 @@ class CharacterSheet(PageBase):
         super().__init__(master, app_controller, "Character Sheet")
 
     def build_ui(self):
-        # Configure main frame to expand
-        self.columnconfigure(0, weight=1)
-        self.rowconfigure(0, weight=1)
-
-        # Create canvas and scrollbar
-        self.canvas = tk.Canvas(self)
-        scrollbar = ttk.Scrollbar(self, orient="vertical", command=self.canvas.yview)
-        
-        # Configure canvas
-        self.canvas.configure(yscrollcommand=scrollbar.set)
-        
-        # Create the content frame that will hold everything
-        self.content_frame = ttk.Frame(self.canvas)
-        
-        # Place canvas and scrollbar using grid
-        self.canvas.grid(row=0, column=0, sticky="nsew")
-        scrollbar.grid(row=0, column=1, sticky="ns")
-        
-        # Configure column weights for proper expansion
-        self.grid_columnconfigure(0, weight=1)
-        
-        # Create canvas window
-        self.canvas_window = self.canvas.create_window(
-            (0, 0), 
-            window=self.content_frame, 
-            anchor="nw",
-            width=self.canvas.winfo_width()  # Make content frame full width
-        )
-        
-        # Bind events for scrolling and resizing
-        self.content_frame.bind('<Configure>', self._on_frame_configure)
-        self.canvas.bind('<Configure>', self._on_canvas_configure)
-        self.bind_all("<MouseWheel>", self._on_mousewheel)
-
         # --- Style Configurations ---
         style = ttk.Style()
         style.configure('Background.TFrame', background="#AD1919", relief='solid', borderwidth=4) # Main container
@@ -51,7 +17,7 @@ class CharacterSheet(PageBase):
         style.configure('abilityscore.TFrame', background="#116A96") # Ability Score Frames
 
         # --- Main Container Frame (3x3 Table) ---
-        container = ttk.Frame(self.content_frame, style="Background.TFrame", padding=10)
+        container = ttk.Frame(self, style="Background.TFrame", padding=10)
         container.pack(fill="both", expand=True, padx=5, pady=5)
 
         container.columnconfigure(0, weight=1) # Left Column
@@ -240,17 +206,3 @@ class CharacterSheet(PageBase):
         except tk.TclError:
             # This handles the case where the entry box is empty
             modifier_score.set("...")
-
-    def _on_canvas_configure(self, event):
-        """Handle canvas resize"""
-        # Update the width of the canvas window when the canvas is resized
-        self.canvas.itemconfig(self.canvas_window, width=event.width)
-
-    def _on_frame_configure(self, event=None):
-        """Reset the scroll region to encompass the inner frame"""
-        # Update scroll region to content size
-        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
-
-    def _on_mousewheel(self, event):
-        """Handle mouse wheel scrolling"""
-        self.canvas.yview_scroll(int(-1*(event.delta/120)), "units")
