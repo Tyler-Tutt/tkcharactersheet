@@ -22,7 +22,7 @@ class App:
         self.style = ttk.Style()
         self.style.theme_use('classic')
 
-        # This line tells Tkinter to call our custom quit_app function
+        # This line tells Tkinter to call the custom quit_app function
         # whenever the user clicks the 'X' button on the window.
         # This ensures the database connection is always closed cleanly.
         self.root.protocol("WM_DELETE_WINDOW", self.quit_app)
@@ -61,9 +61,9 @@ class App:
         self.status_bar.pack(side=tk.BOTTOM, fill=tk.X)
 
         # --- Main content area ---
-        # This frame will hold the canvas and the scrollbar
-        self.style.configure("maincontentframe.TFrame", background="#f6ff00", borderwidth=3, relief='solid')
-        canvas_container = ttk.Frame(root, padding=5, style="maincontentframe.TFrame")
+        # This frame holds the canvas and the scrollbar
+        self.style.configure("canvascontainer.TFrame", background="#f6ff00", borderwidth=3, relief='solid')
+        canvas_container = ttk.Frame(root, padding=5, style="canvascontainer.TFrame")
         canvas_container.pack(fill="both", expand=True, padx=3, pady=3)
         canvas_container.rowconfigure(0, weight=1)
         canvas_container.columnconfigure(0, weight=1)
