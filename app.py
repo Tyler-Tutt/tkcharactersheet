@@ -62,9 +62,9 @@ class App:
 
         # --- Main content area ---
         # This frame holds the canvas and the scrollbar
-        self.style.configure("canvascontainer.TFrame", background="#f6ff00", borderwidth=3, relief='solid')
+        self.style.configure("canvascontainer.TFrame", backgroundcolor="#EFEF13")
         canvas_container = ttk.Frame(root, padding=5, style="canvascontainer.TFrame")
-        canvas_container.pack(fill="both", expand=True, padx=3, pady=3)
+        canvas_container.pack(fill="both", expand=True)
         canvas_container.rowconfigure(0, weight=1)
         canvas_container.columnconfigure(0, weight=1)
 
@@ -90,6 +90,7 @@ class App:
             anchor="nw"
         )
         
+        # TODO Understand .bind
         # Bind events for scrolling and resizing
         self.main_content_frame.bind('<Configure>', self._on_frame_configure)
         self.canvas.bind('<Configure>', self._on_canvas_configure)
@@ -118,6 +119,7 @@ class App:
         """Handle canvas resize"""
         # Update the width of the frame inside the canvas to match the canvas
         self.canvas.itemconfig(self.canvas_window, width=event.width)
+        # print(f"Widget resized! New width: {event.width}, New height: {event.height}")
 
     def _on_frame_configure(self, event=None):
         """Reset the scroll region to encompass the inner frame"""
