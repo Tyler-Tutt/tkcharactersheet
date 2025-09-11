@@ -1,11 +1,72 @@
 import tkinter as tk
 from tkinter import ttk
 from pagebase import PageBase
+from character_sheet_components import CharacterHeaderFrame, AbilityScoreFrame
 
 class CharacterSheet(PageBase):
     """TTRPG Character Sheet Module"""
     def __init__(self, master, app_controller):
+        # Data definitions moved to __init__ for clarity
+        self._define_character_data()
         super().__init__(master, app_controller, "Character Sheet")
+        # Note: build_ui() is called by the super().__init__
+
+    def _define_character_data(self):
+        """Initializes all the data models (tk.Vars) for the character sheet."""
+        # --- Character Header Data ---
+        self.char_vars = {
+            'charactername': tk.StringVar(value="Character Name"),
+            'class_level': tk.StringVar(value="Class & Level"),
+            'background': tk.StringVar(value="Background"),
+            'player_name': tk.StringVar(value="Player Name"),
+            'race': tk.StringVar(value="Race"),
+            'alignment': tk.StringVar(value="Alignment"),
+            'experience_points': tk.StringVar(value="Experience Points")
+        }
+        # DEBUG Loop through the dictionary's items
+        for key, tk_variable in self.char_vars.items():
+            # Use .get() to access the string value inside the tk.StringVar
+            value = tk_variable.get()
+            print(f"Key: {key} | Value: '{value}'")
+
+        # --- Stats Data ---
+        self.proficieny_bonus = tk.IntVar(value=0)
+        self.inspiration = tk.BooleanVar()
+        self.passive_perception = tk.IntVar(value=0)
+
+        # --- Ability & Skill Data ---
+        # List
+        self.abilities = [
+            "Strength", "Dexterity", "Constitution",
+            "Intelligence", "Wisdom", "Charisma"
+        ]
+        # Dictionary
+        self.character_skills = {
+            "Strength": ["Saving Throw", "Athletics"],
+            "Dexterity": ["Saving Throw", "Acrobatics", "Sleight of Hand", "Stealth"],
+            "Constitution": ["Saving Throw"],
+            "Intelligence": ["Saving Throw", "Arcana", "History", "Investigation", "Nature", "Religion"],
+            "Wisdom": ["Saving Throw", "Animal Handling", "Insight", "Medicine", "Perception", "Survival"],
+            "Charisma": ["Saving Throw", "Deception", "Intimidation", "Performance", "Persuasion"]
+        }
+        self.abilitiescore_vars = {}
+        for ability in self.abilities:
+            score_var = tk.IntVar(value=10)
+            modifier_var = tk.StringVar(value="+0")
+            # Dictionary Item inside a Dictionary
+            self.abilitiescore_vars[ability] = {
+                "score": score_var,
+                "modifier": modifier_var,
+                "skills": {
+                    skill: {"proficient": tk.BooleanVar(value=False)}
+                    for skill in self.character_skills[ability]
+                }
+            }
+            # Set up the trace to auto-update the modifier when the score changes
+            score_var.trace_add(
+                "write",
+                lambda *args, s=score_var, m=modifier_var: self.update_modifier(s, m)
+            )
 
     def build_ui(self):
         # --- Style Configurations ---
@@ -24,163 +85,58 @@ class CharacterSheet(PageBase):
         container.columnconfigure(1, weight=1) # Middle Column
         container.columnconfigure(2, weight=1) # Right Column
         container.rowconfigure(0, weight=0) # Character Background Frame Row
-        container.rowconfigure(1, weight=0) 
-        container.rowconfigure(2, weight=0)
+        container.rowconfigure(1, weight=1) # Main content row should expand
 
         # --- Top Pane: Character Background ---
-        charbackgroundframe = ttk.Frame(container, style="characterbackgroundframe.TFrame", padding=5)
-        charbackgroundframe.grid(column=0, row=0, columnspan=4, sticky='ew', pady=(0, 10))
+        # This now uses the CharacterHeaderFrame component
+        characterheaderframe = CharacterHeaderFrame(container, self.char_vars)
+        characterheaderframe.grid(column=0, row=0, columnspan=3, sticky='ew', pady=(0, 10))
 
-        charbackgroundframe.columnconfigure(0, weight=1) # Character Name Column
-        charbackgroundframe.columnconfigure(1, weight=2) # Character Background Column
-        charbackgroundframe.rowconfigure(0, weight=1)
-
-        # 1x1 Table for Character Name
-        characternameframe = ttk.Frame(charbackgroundframe)
-        characternameframe.grid(column=0, row=0, sticky='ew')
-        characternameframe.columnconfigure(0, weight=1)
-        characternameframe.rowconfigure(0, weight=1)
-        self.charactername = tk.StringVar(value="Character Name")
-        ttk.Entry(characternameframe, textvariable=self.charactername).grid(column=0, row=0, sticky='ew')
-
-        # 2x3 Table for Background Info Entries
-        backgroundinfoframe = ttk.Frame(charbackgroundframe)
-        backgroundinfoframe.grid(column=1, row=0, sticky='ew', columnspan=3) # Spans Right 3 Columns
-        backgroundinfoframe.columnconfigure(0, weight=1)
-        backgroundinfoframe.columnconfigure(1, weight=1)
-        backgroundinfoframe.columnconfigure(2, weight=1)
-        backgroundinfoframe.rowconfigure(0, weight=1)
-        backgroundinfoframe.rowconfigure(1, weight=1)
-
-        # Define background fields in a more structured way
-        background_fields = {
-            'class_level': "Class & Level",
-            'background': "Background",
-            'player_name': "Player Name",
-            'race': "Race",
-            'alignment': "Alignment",
-            'experience_points': "Experience Points"
-        }
-
-        # TODO Change appropriate fields into Picklists 
-        self.class_level = tk.StringVar(value="Class & Level")
-        self.background = tk.StringVar(value="Background")
-        self.player_name = tk.StringVar(value="Player Name")
-        self.race = tk.StringVar(value="Race")
-        self.alignment = tk.StringVar(value="Alignment")
-        self.experience_points = tk.StringVar(value="Experience Points")
-
-        ttk.Entry(backgroundinfoframe, textvariable=self.class_level).grid(column=0, row=0, sticky='ew')
-        ttk.Entry(backgroundinfoframe, textvariable=self.background).grid(column=1, row=0, sticky='ew')
-        ttk.Entry(backgroundinfoframe, textvariable=self.player_name).grid(column=2, row=0, sticky='ew')
-        ttk.Entry(backgroundinfoframe, textvariable=self.race).grid(column=0, row=1, sticky='ew')
-        ttk.Entry(backgroundinfoframe, textvariable=self.alignment).grid(column=1, row=1, sticky='ew')
-        ttk.Entry(backgroundinfoframe, textvariable=self.experience_points).grid(column=2, row=1, sticky='ew')
-
-        # --- Stats Frame ---
+        # --- Stats Frame (Left Column) ---
         stats_frame = ttk.Frame(container, style="Stats.TFrame", padding=10)
         stats_frame.grid(column=0, row=1, sticky="nsew", padx=(0, 5))
-        
-        # 9x2 Table for Stats
         stats_frame.columnconfigure(0, weight=1)
         stats_frame.columnconfigure(1, weight=1)
-        stats_frame.rowconfigure(0, weight=1)
-        stats_frame.rowconfigure(1, weight=1)
-        stats_frame.rowconfigure(2, weight=1)
-        stats_frame.rowconfigure(3, weight=1)
-        stats_frame.rowconfigure(4, weight=1)
-        stats_frame.rowconfigure(5, weight=1)
-        stats_frame.rowconfigure(6, weight=1)
-        stats_frame.rowconfigure(7, weight=1)
-        stats_frame.rowconfigure(8, weight=1)
 
-        # --- Proficieny & Inspiration ---
-
+        # --- Proficiency & Inspiration ---
         self.proficieny_bonus = tk.IntVar(value=0)
         self.inspiration = tk.BooleanVar()
         ttk.Entry(stats_frame, textvariable=self.proficieny_bonus).grid(column=0, row=0, sticky='ew', pady=2)
         ttk.Label(stats_frame, text="Proficiency Bonus").grid(column=1, row=0, sticky='ew')
         ttk.Checkbutton(stats_frame, text="Inspiration", variable=self.inspiration).grid(column=0, row=1, columnspan=2, sticky='ew', pady=2)
 
-        # --- Create Ability Score Dictionary ---
-        abilities = [
-            "Strength", "Dexterity", "Constitution",
-            "Intelligence", "Wisdom", "Charisma"
-        ]
-
-        # --- Create Skills Dictionary ---
-        character_skills = {
-            "Strength": ["Saving Throw", "Athletics"],
-            "Dexterity": ["Saving Throw", "Acrobatics", "Sleight of Hand", "Stealth"], 
-            "Constitution": ["Saving Throw"],
-            "Intelligence": ["Saving Throw", "Arcana", "History", "Investigation", "Nature", "Religion"],
-            "Wisdom": ["Saving Throw", "Animal Handling", "Insight", "Medicine", "Perception", "Survival"],
-            "Charisma": ["Saving Throw", "Deception", "Intimidation", "Performance", "Persuasion"]
-        }
-
-        # --- Create empty Dictionaries that will hold Ability Scores & Modifiers ---
-        self.abilitiescore_vars = {}
-        self.abilityscoreframes = {}
-
-        # 'enumerate' gives both the index (for the row) and the Ability name
-        for i, ability in enumerate(abilities):
-            # Create variables for current ability score in the loop
-            score_var = tk.IntVar(value=10)
-            modifier_var = tk.StringVar(value="+0")
-
-            # Store the variables in dictionary using the ability name as the key
-            self.abilitiescore_vars[ability] = {"score": score_var, "modifier": modifier_var}
-            # print(f"Debug: score: {self.abilitiescore_vars[ability]['score'].get()} || modifier: {self.abilitiescore_vars[ability]['modifier'].get()}")
-
-            # Set up the trace using a lambda that passes these specific variables
-            # We use default arguments in the lambda (s=score_var) to "capture" the
-            # current variable in the loop correctly. This is a standard trick.
-            score_var.trace_add(
-                "write",
-                lambda *args, s=score_var, m=modifier_var: self.update_modifier(s, m)
+        # --- Ability Score Frames ---
+        # This loop is now much cleaner, creating an AbilityScoreFrame for each ability
+        for i, ability in enumerate(self.abilities):
+            score_frame = AbilityScoreFrame(
+                stats_frame,
+                ability_name=ability,
+                skills_list=self.character_skills[ability],
+                score_var=self.abilitiescore_vars[ability]['score'],
+                modifier_var=self.abilitiescore_vars[ability]['modifier'],
+                skill_vars_dict=self.abilitiescore_vars[ability]['skills']
             )
-
-            # --- Create 6x4 Table Child Frames for each Ability Score ---
-            frame_key = f"{ability}_frame"
-            score_frame = ttk.Frame(stats_frame, style='abilityscore.TFrame')
-            score_frame.grid(column=0, row=i+2, sticky="ew", columnspan=3, pady=2)
-            score_frame.columnconfigure(0, weight=2)
-            score_frame.columnconfigure(1, weight=1)
-            score_frame.columnconfigure(2, weight=1)
-            score_frame.columnconfigure(3, weight=2)
-            score_frame.rowconfigure(0, weight=1)
-            score_frame.rowconfigure(1, weight=1)
-            score_frame.rowconfigure(2, weight=1)
-            score_frame.rowconfigure(3, weight=1)
-            score_frame.rowconfigure(4, weight=1)
-            score_frame.rowconfigure(5, weight=1)
-            # Adds current Ability Score in Loop to abilityscoreframes dictionary
-            self.abilityscoreframes[frame_key] = score_frame
-
-            # Stat Label, Score, and Modifier Score
-            ttk.Label(self.abilityscoreframes[frame_key], text=ability).grid(column=0, row=0, sticky="w", pady=2)
-            ttk.Entry(self.abilityscoreframes[frame_key], textvariable=score_var, width=5).grid(column=0, row=1, sticky="w", pady=2)
-            ttk.Label(self.abilityscoreframes[frame_key], textvariable=modifier_var).grid(column=0, row=2, sticky="w", pady=2)
-
-            # Proficiency Checkboxes, Sill Scores, Skill Names
-            for j, skill in enumerate(character_skills[ability]):
-                ttk.Checkbutton(self.abilityscoreframes[frame_key]).grid(column=1, row=j, pady=2)
-                ttk.Entry(self.abilityscoreframes[frame_key]).grid(column=2, row=j, pady=2)
-                ttk.Label(self.abilityscoreframes[frame_key], text=skill).grid(column=3, row=j, pady=2)
+            score_frame.grid(column=0, row=i+2, sticky="ew", columnspan=2, pady=2)
 
             # Immediately calculate initial modifier values
-            self.update_modifier(score_var, modifier_var)
+            self.update_modifier(
+                self.abilitiescore_vars[ability]['score'],
+                self.abilitiescore_vars[ability]['modifier']
+            )
+
+        # --- Passive Perception ---
+        # Place it after the ability scores
+        last_ability_row = len(self.abilities) + 1
+        self.passive_perception = tk.IntVar(value=0)
+        ttk.Entry(stats_frame, textvariable=self.passive_perception).grid(column=0, row=last_ability_row + 1, sticky='ew', pady=2)
+        ttk.Label(stats_frame, text="Passive Perception").grid(column=1, row=last_ability_row + 1, sticky='ew')
 
         for statname, statdata in self.abilitiescore_vars.items():
             print(f"stat: {statname}, score: {statdata["score"].get()}, modifier: {statdata["modifier"].get()}")
 
-        self.passive_perception = tk.IntVar(value=0)
-        ttk.Entry(stats_frame, textvariable=self.passive_perception).grid(column=0, row=8, sticky='ew', pady=2)
-        ttk.Label(stats_frame, text="Passive Perception").grid(column=1, row=8, sticky='ew')
-
         # --- Right Side Frame ---
         rightsideframe = ttk.Frame(container, style="Right.TFrame", padding=10)
-        rightsideframe.grid(column=1, row=1, columnspan=3, sticky="nsew", padx=(5, 0))
+        rightsideframe.grid(column=1, row=1, columnspan=2, sticky="nsew", padx=(5, 0))
         
         # Example content for the right side
         right_label = ttk.Label(rightsideframe, text="Inventory / Notes")
@@ -201,7 +157,7 @@ class CharacterSheet(PageBase):
                 result = str(modifier)
                 
             modifier_score.set(result)
-            print(f"{result}")
+            # print(f"{result}") # This can be noisy, commented out
 
         except tk.TclError:
             # This handles the case where the entry box is empty
