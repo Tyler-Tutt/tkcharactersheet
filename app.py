@@ -90,7 +90,6 @@ class App:
             anchor="nw"
         )
         
-        # TODO Understand .bind
         # Bind events for scrolling and resizing
         self.main_content_frame.bind('<Configure>', self._on_frame_configure)
         self.canvas.bind('<Configure>', self._on_canvas_configure)

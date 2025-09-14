@@ -6,7 +6,6 @@ from character_sheet_components import CharacterHeaderFrame, AbilityScoreFrame
 class CharacterSheet(PageBase):
     """TTRPG Character Sheet Module"""
     def __init__(self, master, app_controller):
-        # Data definitions moved to __init__ for clarity
         self._define_character_data()
         super().__init__(master, app_controller, "Character Sheet")
         # Note: build_ui() is called by the super().__init__
@@ -16,7 +15,8 @@ class CharacterSheet(PageBase):
         # --- Character Header Data ---
         self.char_vars = {
             'charactername': tk.StringVar(value="Character Name"),
-            'class_level': tk.StringVar(value="Class & Level"),
+            'characterclass': tk.StringVar(value="Character Class"),
+            'class_level': tk.IntVar(value=1),
             'background': tk.StringVar(value="Background"),
             'player_name': tk.StringVar(value="Player Name"),
             'race': tk.StringVar(value="Race"),
@@ -88,7 +88,7 @@ class CharacterSheet(PageBase):
         container.rowconfigure(1, weight=1) # Main content row should expand
 
         # --- Top Pane: Character Background ---
-        # This now uses the CharacterHeaderFrame component
+        # imported from character_sheet_components
         characterheaderframe = CharacterHeaderFrame(container, self.char_vars)
         characterheaderframe.grid(column=0, row=0, columnspan=3, sticky='ew', pady=(0, 10))
 
@@ -131,6 +131,7 @@ class CharacterSheet(PageBase):
         ttk.Entry(stats_frame, textvariable=self.passive_perception).grid(column=0, row=last_ability_row + 1, sticky='ew', pady=2)
         ttk.Label(stats_frame, text="Passive Perception").grid(column=1, row=last_ability_row + 1, sticky='ew')
 
+        # Debug
         for statname, statdata in self.abilitiescore_vars.items():
             print(f"stat: {statname}, score: {statdata["score"].get()}, modifier: {statdata["modifier"].get()}")
 
@@ -141,6 +142,8 @@ class CharacterSheet(PageBase):
         # Example content for the right side
         right_label = ttk.Label(rightsideframe, text="Inventory / Notes")
         right_label.pack()
+
+    # TODO Debug Method to printf values of Entry's textvariables that are changed
 
     def update_modifier(self, stat_score, modifier_score):
         """
@@ -162,3 +165,21 @@ class CharacterSheet(PageBase):
         except tk.TclError:
             # This handles the case where the entry box is empty
             modifier_score.set("...")
+
+    # TODO Update calculation based upon table in db?
+    def update_proficiency_bonus(self):
+        """Updates the proficiency bonus based on character level."""
+        try:
+            level = int(self.char_vars['class_level'].get().split()[1])  # Assumes format "Class Level"
+            if level >= 17:
+                self.proficieny_bonus.set(6)
+            elif level >= 13:
+                self.proficieny_bonus.set(5)
+            elif level >= 9:
+                self.proficieny_bonus.set(4)
+            elif level >= 5:
+                self.proficieny_bonus.set(3)
+            else:
+                self.proficieny_bonus.set(2)
+        except (IndexError, ValueError):
+            self.proficieny_bonus.set(0)  # Default if parsing fails

@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
 
+# TODO Split 'components' modules into UI Frames per 'primary blocks' of the character sheet
+
 class CharacterHeaderFrame(ttk.Frame):
     """A component for the top character information header."""
     def __init__(self, master, char_vars, **kwargs):
@@ -8,8 +10,9 @@ class CharacterHeaderFrame(ttk.Frame):
         self._build_widgets(char_vars)
 
     def _build_widgets(self, char_vars):
-        self.columnconfigure(0, weight=1) # Character Name Column
-        self.columnconfigure(1, weight=2) # Character Background Column
+        # Configure columns & rows of this CharacterHeaderFrame
+        self.columnconfigure(0, weight=1) # Name Column
+        self.columnconfigure(1, weight=2) # Background Info Column
         self.rowconfigure(0, weight=1)
 
         # 1x1 Table for Character Name
@@ -17,24 +20,26 @@ class CharacterHeaderFrame(ttk.Frame):
         characternameframe.grid(column=0, row=0, sticky='ew')
         characternameframe.columnconfigure(0, weight=1)
         characternameframe.rowconfigure(0, weight=1)
+        characternameframe.rowconfigure(1, weight=1)
         ttk.Entry(characternameframe, textvariable=char_vars['charactername']).grid(column=0, row=0, sticky='ew')
+        ttk.Entry(characternameframe, textvariable=char_vars['characterclass']).grid(column=0, row=1, sticky='ew')
 
         # 2x3 Table for Background Info Entries
         backgroundinfoframe = ttk.Frame(self)
-        backgroundinfoframe.grid(column=1, row=0, sticky='ew', columnspan=3) # Spans Right 3 Columns
+        backgroundinfoframe.grid(column=1, row=0, sticky='ew')
         backgroundinfoframe.columnconfigure(0, weight=1)
         backgroundinfoframe.columnconfigure(1, weight=1)
         backgroundinfoframe.columnconfigure(2, weight=1)
         backgroundinfoframe.rowconfigure(0, weight=1)
         backgroundinfoframe.rowconfigure(1, weight=1)
 
-        ttk.Entry(backgroundinfoframe, textvariable=char_vars['class_level']).grid(column=0, row=0, sticky='ew')
+        ttk.Spinbox(backgroundinfoframe, from_=1, to=20, textvariable=char_vars['class_level']).grid(column=0, row=0, sticky='ew')
         ttk.Entry(backgroundinfoframe, textvariable=char_vars['background']).grid(column=1, row=0, sticky='ew')
         ttk.Entry(backgroundinfoframe, textvariable=char_vars['player_name']).grid(column=2, row=0, sticky='ew')
+        # TODO Turn 'race' into a dropdown/picklist that gets its values from a table in the dnd5e.db file (sqllite)
         ttk.Entry(backgroundinfoframe, textvariable=char_vars['race']).grid(column=0, row=1, sticky='ew')
         ttk.Entry(backgroundinfoframe, textvariable=char_vars['alignment']).grid(column=1, row=1, sticky='ew')
         ttk.Entry(backgroundinfoframe, textvariable=char_vars['experience_points']).grid(column=2, row=1, sticky='ew')
-
 
 class AbilityScoreFrame(ttk.Frame):
     """A component for a single ability score block (e.g., Strength)."""
