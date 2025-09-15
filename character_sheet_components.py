@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from database import get_races
 
 # TODO Split 'components' modules into UI Frames per 'primary blocks' of the character sheet
 
@@ -33,11 +34,12 @@ class CharacterHeaderFrame(ttk.Frame):
         backgroundinfoframe.rowconfigure(0, weight=1)
         backgroundinfoframe.rowconfigure(1, weight=1)
 
-        ttk.Spinbox(backgroundinfoframe, from_=1, to=20, textvariable=char_vars['class_level']).grid(column=0, row=0, sticky='ew')
+        race_options = get_races()
+
+        ttk.Spinbox(backgroundinfoframe, from_=1, to=20, textvariable=char_vars['level']).grid(column=0, row=0, sticky='ew')
         ttk.Entry(backgroundinfoframe, textvariable=char_vars['background']).grid(column=1, row=0, sticky='ew')
         ttk.Entry(backgroundinfoframe, textvariable=char_vars['player_name']).grid(column=2, row=0, sticky='ew')
-        # TODO Turn 'race' into a dropdown/picklist that gets its values from a table in the dnd5e.db file (sqllite)
-        ttk.Entry(backgroundinfoframe, textvariable=char_vars['race']).grid(column=0, row=1, sticky='ew')
+        ttk.Combobox(backgroundinfoframe, textvariable=char_vars['race'], values=race_options, state="readonly").grid(column=0, row=1, sticky='ew')
         ttk.Entry(backgroundinfoframe, textvariable=char_vars['alignment']).grid(column=1, row=1, sticky='ew')
         ttk.Entry(backgroundinfoframe, textvariable=char_vars['experience_points']).grid(column=2, row=1, sticky='ew')
 

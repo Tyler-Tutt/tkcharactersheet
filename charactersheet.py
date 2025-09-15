@@ -16,7 +16,7 @@ class CharacterSheet(PageBase):
         self.char_vars = {
             'charactername': tk.StringVar(value="Character Name"),
             'characterclass': tk.StringVar(value="Character Class"),
-            'class_level': tk.IntVar(value=1),
+            'level': tk.IntVar(value=1),
             'background': tk.StringVar(value="Background"),
             'player_name': tk.StringVar(value="Player Name"),
             'race': tk.StringVar(value="Race"),
@@ -166,11 +166,11 @@ class CharacterSheet(PageBase):
             # This handles the case where the entry box is empty
             modifier_score.set("...")
 
-    # TODO Update calculation based upon table in db?
+    # TODO Update calculation based upon table in db? (What data/formulas to have in DB vs code?)
     def update_proficiency_bonus(self):
         """Updates the proficiency bonus based on character level."""
         try:
-            level = int(self.char_vars['class_level'].get().split()[1])  # Assumes format "Class Level"
+            level = int(self.char_vars['level'].get().split()[1])  # Assumes format "Class Level"
             if level >= 17:
                 self.proficieny_bonus.set(6)
             elif level >= 13:

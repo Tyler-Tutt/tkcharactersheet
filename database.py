@@ -32,6 +32,17 @@ def init_db():
     conn.commit()
     conn.close()
 
+def get_races():
+    """Fetches and returns a list of all race names from the database."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT name FROM races ORDER BY name ASC")
+    # The result from fetchall is a list of tuples, e.g., [('Dwarf',), ('Elf',)]
+    # We use a list comprehension to extract the first item from each tuple.
+    races = [row['name'] for row in cursor.fetchall()]
+    conn.close()
+    return races
+
 class UserPreferences:
     def __init__(self, username):
         self.username = username
