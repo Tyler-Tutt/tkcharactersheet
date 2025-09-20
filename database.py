@@ -1,6 +1,8 @@
 import sqlite3
 import json
 
+# TODO Figure out how to save/load a character's sheet/data
+
 DATABASE_FILE = "dnd5e.db"
 
 def get_db_connection():
@@ -75,35 +77,3 @@ class UserPreferences:
                                (self.username, prefs_json))
             self.conn.commit()
             return default_prefs
-
-    def get_page_preferences(self, page_name, default_prefs=None):
-        """Gets the entire preference dictionary for a specific page."""
-        if default_prefs is None:
-            default_prefs = {}
-        # Get the sub-dictionary for the page, or return the default if not found.
-        return self.preferences.get(page_name, default_prefs)
-
-    def get_preference(self, page_name, key, default=None):
-        """Gets a specific preference value from within a page's preferences."""
-        # Get the page's preference dictionary first
-        page_prefs = self.preferences.get(page_name, {})
-        # Then get the specific key from that dictionary
-        return page_prefs.get(key, default)
-
-    def set_preference(self, page_name, key, value):
-        """Sets a specific preference value and saves it to the database."""
-        if page_name not in self.preferences:
-            self.preferences[page_name] = {}
-        self.preferences[page_name][key] = value
-        
-        # Save the entire updated preferences dictionary back to the DB
-        prefs_json = json.dumps(self.preferences)
-        cursor = self.conn.cursor()
-        cursor.execute("UPDATE users SET preferences = ? WHERE username = ?",
-                       (prefs_json, self.username))
-        self.conn.commit()
-
-    def close_connection(self):
-        """Closes the database connection."""
-        if self.conn:
-            self.conn.close()

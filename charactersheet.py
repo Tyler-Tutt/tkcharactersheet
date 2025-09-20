@@ -29,11 +29,6 @@ class CharacterSheet(PageBase):
             value = tk_variable.get()
             print(f"Key: {key} | Value: '{value}'")
 
-        # --- Stats Data ---
-        self.proficieny_bonus = tk.IntVar(value=0)
-        self.inspiration = tk.BooleanVar()
-        self.passive_perception = tk.IntVar(value=0)
-
         # --- Ability & Skill Data ---
         # List
         self.abilities = [
@@ -106,7 +101,7 @@ class CharacterSheet(PageBase):
         ttk.Checkbutton(stats_frame, text="Inspiration", variable=self.inspiration).grid(column=0, row=1, columnspan=2, sticky='ew', pady=2)
 
         # --- Ability Score Frames ---
-        # This loop is now much cleaner, creating an AbilityScoreFrame for each ability
+        # Create an AbilityScoreFrame for each ability
         for i, ability in enumerate(self.abilities):
             score_frame = AbilityScoreFrame(
                 stats_frame,
@@ -125,7 +120,7 @@ class CharacterSheet(PageBase):
             )
 
         # --- Passive Perception ---
-        # Place it after the ability scores
+        # Placed after ability scores
         last_ability_row = len(self.abilities) + 1
         self.passive_perception = tk.IntVar(value=0)
         ttk.Entry(stats_frame, textvariable=self.passive_perception).grid(column=0, row=last_ability_row + 1, sticky='ew', pady=2)
@@ -143,8 +138,6 @@ class CharacterSheet(PageBase):
         right_label = ttk.Label(rightsideframe, text="Inventory / Notes")
         right_label.pack()
 
-    # TODO Debug Method to printf values of Entry's textvariables that are changed
-
     def update_modifier(self, stat_score, modifier_score):
         """
         Calculates a modifier based on the score from 'stat_score'
@@ -160,10 +153,10 @@ class CharacterSheet(PageBase):
                 result = str(modifier)
                 
             modifier_score.set(result)
-            # print(f"{result}") # This can be noisy, commented out
+            # print(f"{result}")
 
         except tk.TclError:
-            # This handles the case where the entry box is empty
+            # Handles the case where the entry box is empty
             modifier_score.set("...")
 
     # TODO Update calculation based upon table in db? (What data/formulas to have in DB vs code?)
