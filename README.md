@@ -22,7 +22,7 @@
 
 # Dev Environment Routine:
 ## Bash Activate Linux Virutal Environment:
-    source venv/bin/activate
+    source .venv/bin/activate
 ## Powershell Activate Windows Virutal Environment
     .\.venv_win\Scripts\activate
 ## When installing a new library

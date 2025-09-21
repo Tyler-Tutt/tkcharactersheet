@@ -45,8 +45,8 @@ class App:
         # File Menu
         file_menu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="File", menu=file_menu)
-        #file_menu.add_command(label="Switch User", command=self.switch_user)
-        #file_menu.add_separator()
+        # file_menu.add_command(label="Switch User", command=self.switch_user)
+        # file_menu.add_separator()
         file_menu.add_command(label="Restart (Ctrl+R)", command=self.restart_app)
         file_menu.add_separator()
         file_menu.add_command(label="Exit (Ctrl+Q)", command=self.quit_app)
@@ -113,6 +113,9 @@ class App:
         # sys.executable is the path to the current Python interpreter.
         # sys.argv is the list of original command line arguments.
         os.execl(sys.executable, sys.executable, *sys.argv)
+
+    # def switch_user(self, event=None):
+
 
     def _on_canvas_configure(self, event):
         """Handle canvas resize"""
