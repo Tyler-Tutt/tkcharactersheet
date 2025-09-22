@@ -45,8 +45,10 @@ class App:
         # File Menu
         file_menu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="File", menu=file_menu)
-        # file_menu.add_command(label="Switch User", command=self.switch_user)
-        # file_menu.add_separator()
+        file_menu.add_command(label="Save Character", command=self._save_current_character)
+        file_menu.add_separator()
+        file_menu.add_command(label="Load Character", command=self._load_character_prompt)
+        file_menu.add_separator()
         file_menu.add_command(label="Restart (Ctrl+R)", command=self.restart_app)
         file_menu.add_separator()
         file_menu.add_command(label="Exit (Ctrl+Q)", command=self.quit_app)
@@ -116,6 +118,46 @@ class App:
 
     # def switch_user(self, event=None):
 
+    def _save_current_character(self):
+        """Calls the save method on the current page if it's a CharacterSheet."""
+        # Check if the current page is a CharacterSheet and has a save method
+        if isinstance(self.current_page, CharacterSheet) and hasattr(self.current_page, 'save_character'):
+            self.current_page.save_character()
+        else:
+            messagebox.showinfo("Info", "No character sheet is open to save.")
+
+    def _load_character_prompt(self):
+        """Shows a dialog to select a character to load."""
+        character_list = database.get_character_list()
+        if not character_list:
+            messagebox.showinfo("Load Character", "There are no saved characters to load.")
+            return
+
+        # We need to create a simple dialog window.
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Load Character")
+        dialog.geometry("250x120")
+        dialog.resizable(False, False)
+
+        ttk.Label(dialog, text="Select a character:").pack(pady=(10,5))
+        
+        selected_char = tk.StringVar()
+        char_combo = ttk.Combobox(dialog, textvariable=selected_char, values=character_list, state="readonly")
+        char_combo.pack(pady=5, padx=10)
+        if character_list:
+            char_combo.set(character_list[0])
+
+        def on_load():
+            # Get the selected name and show the page
+            char_name = selected_char.get()
+            if char_name:
+                # Pass the selected name to the show_page method
+                self.show_page(CharacterSheet, character_to_load=char_name)
+            dialog.destroy()
+
+        load_button = ttk.Button(dialog, text="Load", command=on_load)
+        load_button.pack(pady=10)
+
 
     def _on_canvas_configure(self, event):
         """Handle canvas resize"""
@@ -133,7 +175,7 @@ class App:
         # The division by 120 is for Windows to normalize scroll speed
         self.canvas.yview_scroll(int(-1*(event.delta/120)), "units")
 
-    def show_page(self, page_class):
+    def show_page(self, page_class, **kwargs):
         """Ensures Page to be shown/displayed correctly triggers"""
         if self.current_page:
             self.current_page.destroy()

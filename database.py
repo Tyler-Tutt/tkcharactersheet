@@ -30,9 +30,58 @@ def init_db():
             preferences TEXT
         )
     ''')
+
+    # Store a JSON string of the entire sheet in characters table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS characters (
+            name TEXT PRIMARY KEY,
+            data TEXT NOT NULL
+        )
+    ''')
     
     conn.commit()
     conn.close()
+
+def save_character(character_name, character_data):
+    """
+    Saves a character's data to the database.
+    Inserts a new record or replaces an existing one based on the character name.
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    # Convert the Python dictionary to a JSON string for storage
+    data_json = json.dumps(character_data)
+    
+    # Use INSERT OR REPLACE to handle both new and existing characters
+    cursor.execute("INSERT OR REPLACE INTO characters (name, data) VALUES (?, ?)",
+                   (character_name, data_json))
+    
+    conn.commit()
+    conn.close()
+    print(f"Character '{character_name}' saved successfully.")
+
+def get_character_list():
+    """Fetches and returns a list of all saved character names."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT name FROM characters ORDER BY name ASC")
+    # Use a list comprehension to extract the name from each row tuple
+    characters = [row['name'] for row in cursor.fetchall()]
+    conn.close()
+    return characters
+
+# --- ADD THIS NEW FUNCTION ---
+def load_character(character_name):
+    """Fetches a specific character's data from the database."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT data FROM characters WHERE name = ?", (character_name,))
+    row = cursor.fetchone()
+    conn.close()
+    if row:
+        # Parse the JSON string and return it as a Python dictionary
+        return json.loads(row['data'])
+    return None # Return None if no character is found
 
 def get_races():
     """Fetches and returns a list of all race names from the database."""

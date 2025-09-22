@@ -1,7 +1,8 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 from pagebase import PageBase
 from character_sheet_components import CharacterHeaderFrame, AbilityScoreFrame
+import database
 
 class CharacterSheet(PageBase):
     """TTRPG Character Sheet Module"""
@@ -62,6 +63,42 @@ class CharacterSheet(PageBase):
                 "write",
                 lambda *args, s=score_var, m=modifier_var: self.update_modifier(s, m)
             )
+
+    def _get_data_as_dict(self):
+        """Gathers all character data from the tk.Vars into a Python dictionary."""
+        data = {}
+        # Get header data
+        for key, var in self.char_vars.items():
+            data[key] = var.get()
+
+        # Get ability scores and skills data
+        data['abilities'] = {}
+        for ability, ability_data in self.abilitiescore_vars.items():
+            data['abilities'][ability] = {
+                'score': ability_data['score'].get(),
+                'skills': {
+                    skill: {'proficient': prof_data['proficient'].get()}
+                    for skill, prof_data in ability_data['skills'].items()
+                }
+            }
+        return data
+
+    def save_character(self):
+        """Gathers the data and saves it to the database."""
+        # Get the character's name to use as the primary key
+        char_name = self.char_vars['charactername'].get()
+        if not char_name or char_name == "Character Name":
+            messagebox.showerror("Save Error", "Please enter a character name before saving.")
+            return
+
+        # Gather all data from the sheet
+        character_data = self._get_data_as_dict()
+        
+        # Call the database function to save the data
+        database.save_character(char_name, character_data)
+        
+        # Show a confirmation message
+        messagebox.showinfo("Success", f"Character '{char_name}' was saved successfully!")
 
     def build_ui(self):
         # --- Style Configurations ---
