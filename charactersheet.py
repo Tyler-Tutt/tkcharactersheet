@@ -6,12 +6,11 @@ import database
 
 class CharacterSheet(PageBase):
     """TTRPG Character Sheet Module"""
-    def __init__(self, master, app_controller):
-        self._define_character_data()
+    def __init__(self, master, app_controller, character_to_load=None):
+        self._define_character_data(character_to_load)
         super().__init__(master, app_controller, "Character Sheet")
-        # Note: build_ui() is called by the super().__init__
 
-    def _define_character_data(self):
+    def _define_character_data(self, character_to_load=None):
         """Initializes all the data models (tk.Vars) for the character sheet."""
         # --- Character Header Data ---
         self.char_vars = {
@@ -62,6 +61,38 @@ class CharacterSheet(PageBase):
             score_var.trace_add(
                 "write",
                 lambda *args, s=score_var, m=modifier_var: self.update_modifier(s, m)
+            )
+        
+        if character_to_load:
+            self._load_data(character_to_load)
+
+    def _load_data(self, character_name):
+        """Fetches data from DB and populates the tk.Vars."""
+        print(f"Loading data for {character_name}...")
+        data = database.load_character(character_name)
+        if not data:
+            messagebox.showerror("Load Error", f"Could not find data for {character_name}.")
+            return
+
+        # Populate header data
+        for key, value in data.items():
+            if key in self.char_vars:
+                self.char_vars[key].set(value)
+
+        # Populate ability scores and skills
+        if 'abilities' in data:
+            for ability, ability_data in data['abilities'].items():
+                if ability in self.abilitiescore_vars:
+                    self.abilitiescore_vars[ability]['score'].set(ability_data['score'])
+                    for skill, skill_data in ability_data['skills'].items():
+                        if skill in self.abilitiescore_vars[ability]['skills']:
+                            self.abilitiescore_vars[ability]['skills'][skill]['proficient'].set(skill_data['proficient'])
+        
+        # After loading, immediately update all modifiers
+        for ability in self.abilities:
+            self.update_modifier(
+                self.abilitiescore_vars[ability]['score'],
+                self.abilitiescore_vars[ability]['modifier']
             )
 
     def _get_data_as_dict(self):

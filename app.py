@@ -158,7 +158,6 @@ class App:
         load_button = ttk.Button(dialog, text="Load", command=on_load)
         load_button.pack(pady=10)
 
-
     def _on_canvas_configure(self, event):
         """Handle canvas resize"""
         # Update the width of the frame inside the canvas to match the canvas
@@ -187,7 +186,7 @@ class App:
 
         try:
             # TRY to create the page.
-            self.current_page = page_class(self.main_content_frame, self)
+            self.current_page = page_class(self.main_content_frame, self, **kwargs)
             self.current_page.pack(fill="both", expand=True)
             self.root.title(f"tkcharactersheet - {self.current_page.page_name}")
 
