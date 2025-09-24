@@ -12,7 +12,7 @@ class CharacterSheet(PageBase):
 
     def _define_character_data(self, character_to_load=None):
         """Initializes all the data models (tk.Vars) for the character sheet."""
-        # --- Character Header Data ---
+        # --- Character Variables ---
         self.char_vars = {
             'charactername': tk.StringVar(value="Character Name"),
             'characterclass': tk.StringVar(value="Character Class"),
@@ -23,11 +23,6 @@ class CharacterSheet(PageBase):
             'alignment': tk.StringVar(value="Alignment"),
             'experience_points': tk.StringVar(value="Experience Points")
         }
-        # DEBUG Loop through the dictionary's items
-        for key, tk_variable in self.char_vars.items():
-            # Use .get() to access the string value inside the tk.StringVar
-            value = tk_variable.get()
-            print(f"Key: {key} | Value: '{value}'")
 
         # --- Ability & Skill Data ---
         # List

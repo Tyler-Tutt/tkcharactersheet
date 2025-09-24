@@ -22,7 +22,7 @@ class App:
         self.style = ttk.Style()
         self.style.theme_use('classic')
 
-        # This line tells Tkinter to call the custom quit_app function
+        # Tells Tkinter to call the custom quit_app function
         # whenever the user clicks the 'X' button on the window.
         # This ensures the database connection is always closed cleanly.
         self.root.protocol("WM_DELETE_WINDOW", self.quit_app)
@@ -32,6 +32,7 @@ class App:
         # This is bound to the root window, so it works globally.
         self.root.bind('<Control-q>', self.quit_app)
         self.root.bind('<Control-r>', self.restart_app)
+        self.root.bind('<Control-s>', self._save_current_character)
 
         self.current_user = DEFAULT_USER
         self.user_prefs = UserPreferences(self.current_user)
@@ -45,7 +46,7 @@ class App:
         # File Menu
         file_menu = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label="File", menu=file_menu)
-        file_menu.add_command(label="Save Character", command=self._save_current_character)
+        file_menu.add_command(label="Save Character (Ctrl+S)", command=self._save_current_character)
         file_menu.add_separator()
         file_menu.add_command(label="Load Character", command=self._load_character_prompt)
         file_menu.add_separator()
@@ -118,7 +119,7 @@ class App:
 
     # def switch_user(self, event=None):
 
-    def _save_current_character(self):
+    def _save_current_character(self, event=None):
         """Calls the save method on the current page if it's a CharacterSheet."""
         # Check if the current page is a CharacterSheet and has a save method
         if isinstance(self.current_page, CharacterSheet) and hasattr(self.current_page, 'save_character'):
@@ -133,7 +134,7 @@ class App:
             messagebox.showinfo("Load Character", "There are no saved characters to load.")
             return
 
-        # We need to create a simple dialog window.
+        # Create a simple dialog window.
         dialog = tk.Toplevel(self.root)
         dialog.title("Load Character")
         dialog.geometry("250x120")
@@ -142,10 +143,10 @@ class App:
         ttk.Label(dialog, text="Select a character:").pack(pady=(10,5))
         
         selected_char = tk.StringVar()
-        char_combo = ttk.Combobox(dialog, textvariable=selected_char, values=character_list, state="readonly")
-        char_combo.pack(pady=5, padx=10)
+        char_picklist = ttk.Combobox(dialog, textvariable=selected_char, values=character_list, state="readonly")
+        char_picklist.pack(pady=5, padx=10)
         if character_list:
-            char_combo.set(character_list[0])
+            char_picklist.set(character_list[0])
 
         def on_load():
             # Get the selected name and show the page
@@ -189,8 +190,6 @@ class App:
             self.current_page = page_class(self.main_content_frame, self, **kwargs)
             self.current_page.pack(fill="both", expand=True)
             self.root.title(f"tkcharactersheet - {self.current_page.page_name}")
-
-            print(f"Debug: Successfully displayed page: {page_class.__name__}")
 
         except Exception as e:
             # If ANYTHING goes wrong inside the try block, this code will run.
