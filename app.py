@@ -5,7 +5,7 @@ import os
 import sys # Access system-specific parameters
 import database # database.py file
 from database import UserPreferences
-from charactersheet import CharacterSheet
+from views.character_sheet import CharacterSheet
 
 # --- Configuration ---
 USER_DATA_DIR = "user_data"
