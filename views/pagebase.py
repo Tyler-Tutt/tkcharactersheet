@@ -10,7 +10,7 @@ class PageBase(ttk.Frame):
         self.page_name = page_name
         self.default_prefs = default_prefs if default_prefs is not None else {}
 
-        self.build_ui()
+        #self.build_ui()
 
     def build_ui(self):
         """Placeholder for UI building in subclasses."""

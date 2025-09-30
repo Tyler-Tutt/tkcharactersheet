@@ -38,29 +38,31 @@ class Character:
             "Wisdom": ["Saving Throw", "Animal Handling", "Insight", "Medicine", "Perception", "Survival"],
             "Charisma": ["Saving Throw", "Deception", "Intimidation", "Performance", "Persuasion"]
         }
+
+
         self.abilitiescore_vars = {}
         for ability in self.abilities:
             score_var = tk.IntVar(value=10)
             modifier_var = tk.StringVar(value="+0")
-            # Dictionary Item inside a Dictionary
             self.abilitiescore_vars[ability] = {
                 "score": score_var,
                 "modifier": modifier_var,
+                # Dictionary Comprehension
                 "skills": {
                     skill: {"proficient": tk.BooleanVar(value=False)}
                     for skill in self.character_skills[ability]
                 }
             }
-            # Set up the trace to auto-update the modifier when the score changes
+            # Set up trace to auto-update modifier when score changes
             score_var.trace_add(
                 "write",
                 lambda *args, s=score_var, m=modifier_var: self.update_modifier(s, m)
             )
         
         if character_to_load:
-            self._load_data(character_to_load)
+            self.load(character_to_load)
 
-    def _load_data(self, character_name):
+    def load(self, character_name):
         """Fetches data from DB and populates the tk.Vars."""
         print(f"Loading data for {character_name}...")
         data = database.load_character(character_name)
@@ -88,6 +90,25 @@ class Character:
                 self.abilitiescore_vars[ability]['score'],
                 self.abilitiescore_vars[ability]['modifier']
             )
+        self.update_proficiency_bonus()
+
+
+    def save(self):
+        """Gathers the data and saves it to the database."""
+        # Get the character's name to use as the primary key
+        char_name = self.char_vars['charactername'].get()
+        if not char_name or char_name == "Character Name":
+            messagebox.showerror("Save Error", "Please enter a character name before saving.")
+            return
+
+        # Gather all data from the sheet
+        character_data = self._get_data_as_dict()
+        
+        # Call the database function to save the data
+        database.save_character(char_name, character_data)
+        
+        # Show a confirmation message
+        messagebox.showinfo("Success", f"Character '{char_name}' was saved successfully!")
 
     def _get_data_as_dict(self):
         """Gathers all character data from the tk.Vars into a Python dictionary."""
@@ -108,19 +129,41 @@ class Character:
             }
         return data
 
-    def save_character(self):
-        """Gathers the data and saves it to the database."""
-        # Get the character's name to use as the primary key
-        char_name = self.char_vars['charactername'].get()
-        if not char_name or char_name == "Character Name":
-            messagebox.showerror("Save Error", "Please enter a character name before saving.")
-            return
+    def update_modifier(self, stat_score, modifier_score):
+        """
+        Calculates a modifier based on the score from 'stat_score'
+        and updates the text of 'modifier_score'.
+        """
+        try:
+            score = stat_score.get()
+            modifier = (score - 10) // 2
+            
+            if modifier >= 0:
+                result = f"+{modifier}"
+            else:
+                result = str(modifier)
+                
+            modifier_score.set(result)
+            # print(f"{result}")
 
-        # Gather all data from the sheet
-        character_data = self._get_data_as_dict()
-        
-        # Call the database function to save the data
-        database.save_character(char_name, character_data)
-        
-        # Show a confirmation message
-        messagebox.showinfo("Success", f"Character '{char_name}' was saved successfully!")
+        except tk.TclError:
+            # Handles the case where the entry box is empty
+            modifier_score.set("...")
+
+    # TODO Update calculation based upon table in db? (What data/formulas to have in DB vs code?)
+    def update_proficiency_bonus(self):
+        """Updates the proficiency bonus based on character level."""
+        try:
+            level = int(self.char_vars['level'].get()) #.split()[1])  # Assumes format "Class Level"
+            if level >= 17:
+                self.proficiency_bonus.set(6)
+            elif level >= 13:
+                self.proficiency_bonus.set(5)
+            elif level >= 9:
+                self.proficiency_bonus.set(4)
+            elif level >= 5:
+                self.proficiency_bonus.set(3)
+            else:
+                self.proficiency_bonus.set(2)
+        except (IndexError, ValueError):
+            self.proficiency_bonus.set(0)  # Default if parsing fails

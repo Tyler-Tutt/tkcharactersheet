@@ -43,40 +43,40 @@ class CharacterSheet(PageBase):
         stats_frame.columnconfigure(1, weight=1)
 
         # --- Proficiency & Inspiration ---
-        self.proficieny_bonus = tk.IntVar(value=0)
+        self.proficiency_bonus = tk.IntVar(value=0)
         self.inspiration = tk.BooleanVar()
-        ttk.Entry(stats_frame, textvariable=self.proficieny_bonus).grid(column=0, row=0, sticky='ew', pady=2)
+        ttk.Entry(stats_frame, textvariable=self.proficiency_bonus).grid(column=0, row=0, sticky='ew', pady=2)
         ttk.Label(stats_frame, text="Proficiency Bonus").grid(column=1, row=0, sticky='ew')
         ttk.Checkbutton(stats_frame, text="Inspiration", variable=self.inspiration).grid(column=0, row=1, columnspan=2, sticky='ew', pady=2)
 
         # --- Ability Score Frames ---
-        # Create an AbilityScoreFrame for each ability
-        for i, ability in enumerate(self.abilities):
+        # Create an AbilityScoreFrame [Class] for each ability
+        for i, ability in enumerate(self.character.abilities):
             score_frame = AbilityScoreFrame(
                 stats_frame,
                 ability_name=ability,
-                skills_list=self.character_skills[ability],
-                score_var=self.abilitiescore_vars[ability]['score'],
-                modifier_var=self.abilitiescore_vars[ability]['modifier'],
-                skill_vars_dict=self.abilitiescore_vars[ability]['skills']
+                skills_list=self.character.character_skills[ability],
+                score_var=self.character.abilitiescore_vars[ability]['score'],
+                modifier_var=self.character.abilitiescore_vars[ability]['modifier'],
+                skill_vars_dict=self.character.abilitiescore_vars[ability]['skills']
             )
             score_frame.grid(column=0, row=i+2, sticky="ew", columnspan=2, pady=2)
 
             # Immediately calculate initial modifier values
-            self.update_modifier(
-                self.abilitiescore_vars[ability]['score'],
-                self.abilitiescore_vars[ability]['modifier']
+            self.character.update_modifier(
+                self.character.abilitiescore_vars[ability]['score'],
+                self.character.abilitiescore_vars[ability]['modifier']
             )
 
         # --- Passive Perception ---
         # Placed after ability scores
-        last_ability_row = len(self.abilities) + 1
+        last_ability_row = len(self.character.abilities) + 1
         self.passive_perception = tk.IntVar(value=0)
         ttk.Entry(stats_frame, textvariable=self.passive_perception).grid(column=0, row=last_ability_row + 1, sticky='ew', pady=2)
         ttk.Label(stats_frame, text="Passive Perception").grid(column=1, row=last_ability_row + 1, sticky='ew')
 
         # Debug
-        for statname, statdata in self.abilitiescore_vars.items():
+        for statname, statdata in self.character.abilitiescore_vars.items():
             print(f"stat: {statname}, score: {statdata["score"].get()}, modifier: {statdata["modifier"].get()}")
 
         # --- Right Side Frame ---
@@ -86,42 +86,7 @@ class CharacterSheet(PageBase):
         # Example content for the right side
         right_label = ttk.Label(rightsideframe, text="Inventory / Notes")
         right_label.pack()
-
-    def update_modifier(self, stat_score, modifier_score):
-        """
-        Calculates a modifier based on the score from 'stat_score'
-        and updates the text of 'modifier_score'.
-        """
-        try:
-            score = stat_score.get()
-            modifier = (score - 10) // 2
-            
-            if modifier >= 0:
-                result = f"+{modifier}"
-            else:
-                result = str(modifier)
-                
-            modifier_score.set(result)
-            # print(f"{result}")
-
-        except tk.TclError:
-            # Handles the case where the entry box is empty
-            modifier_score.set("...")
-
-    # TODO Update calculation based upon table in db? (What data/formulas to have in DB vs code?)
-    def update_proficiency_bonus(self):
-        """Updates the proficiency bonus based on character level."""
-        try:
-            level = int(self.char_vars['level'].get().split()[1])  # Assumes format "Class Level"
-            if level >= 17:
-                self.proficieny_bonus.set(6)
-            elif level >= 13:
-                self.proficieny_bonus.set(5)
-            elif level >= 9:
-                self.proficieny_bonus.set(4)
-            elif level >= 5:
-                self.proficieny_bonus.set(3)
-            else:
-                self.proficieny_bonus.set(2)
-        except (IndexError, ValueError):
-            self.proficieny_bonus.set(0)  # Default if parsing fails
+        
+    def save_character(self):
+        """Public method to trigger the model's save functionality."""
+        self.character.save()
