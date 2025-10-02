@@ -23,6 +23,8 @@ class Character:
             'experience_points': tk.StringVar(value="Experience Points")
         }
 
+        self.proficiency_bonus = tk.IntVar(value=2) # Start with +2 for level 1
+
         # --- Ability & Skill Data ---
         # List
         self.abilities = [
@@ -58,6 +60,11 @@ class Character:
                 "write",
                 lambda *args, s=score_var, m=modifier_var: self.update_modifier(s, m)
             )
+
+        # Whenever the 'level' changes, call the update function.
+        self.char_vars['level'].trace_add(
+            "write",
+            self.update_proficiency_bonus)
         
         if character_to_load:
             self.load(character_to_load)
@@ -151,10 +158,10 @@ class Character:
             modifier_score.set("...")
 
     # TODO Update calculation based upon table in db? (What data/formulas to have in DB vs code?)
-    def update_proficiency_bonus(self):
+    def update_proficiency_bonus(self, *args):
         """Updates the proficiency bonus based on character level."""
         try:
-            level = int(self.char_vars['level'].get()) #.split()[1])  # Assumes format "Class Level"
+            level = self.char_vars['level'].get()
             if level >= 17:
                 self.proficiency_bonus.set(6)
             elif level >= 13:

@@ -45,7 +45,7 @@ class CharacterSheet(PageBase):
         # --- Proficiency & Inspiration ---
         self.proficiency_bonus = tk.IntVar(value=0)
         self.inspiration = tk.BooleanVar()
-        ttk.Entry(stats_frame, textvariable=self.proficiency_bonus).grid(column=0, row=0, sticky='ew', pady=2)
+        ttk.Entry(stats_frame, textvariable=self.character.proficiency_bonus).grid(column=0, row=0, sticky='ew', pady=2)
         ttk.Label(stats_frame, text="Proficiency Bonus").grid(column=1, row=0, sticky='ew')
         ttk.Checkbutton(stats_frame, text="Inspiration", variable=self.inspiration).grid(column=0, row=1, columnspan=2, sticky='ew', pady=2)
 
