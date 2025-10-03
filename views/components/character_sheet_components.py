@@ -16,7 +16,7 @@ class CharacterHeaderFrame(ttk.Frame):
         self.columnconfigure(1, weight=2) # Background Info Column
         self.rowconfigure(0, weight=1)
 
-        # 1x1 Table for Character Name
+        # 2x1 Table for Character Name & Class
         characternameframe = ttk.Frame(self)
         characternameframe.grid(column=0, row=0, sticky='ew')
         characternameframe.columnconfigure(0, weight=1)

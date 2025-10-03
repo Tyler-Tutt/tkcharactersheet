@@ -88,8 +88,8 @@ def get_races():
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT name FROM races ORDER BY name ASC")
-    # The result from fetchall is a list of tuples, e.g., [('Dwarf',), ('Elf',)]
-    # We use a list comprehension to extract the first item from each tuple.
+    # The result from fetchall is a list of Tuples per Row of Data returned, e.g., [('Dwarf',), ('Elf',)]
+    # Use a list comprehension to extract the first item from each tuple.
     races = [row['name'] for row in cursor.fetchall()]
     conn.close()
     return races
