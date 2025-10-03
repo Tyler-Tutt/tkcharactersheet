@@ -41,7 +41,6 @@ class Character:
             "Charisma": ["Saving Throw", "Deception", "Intimidation", "Performance", "Persuasion"]
         }
 
-
         self.abilitiescore_vars = {}
         for ability in self.abilities:
             score_var = tk.IntVar(value=10)
@@ -157,7 +156,6 @@ class Character:
             # Handles the case where the entry box is empty
             modifier_score.set("...")
 
-    # TODO Update calculation based upon table in db? (What data/formulas to have in DB vs code?)
     def update_proficiency_bonus(self, *args):
         """Updates the proficiency bonus based on character level."""
         try:
