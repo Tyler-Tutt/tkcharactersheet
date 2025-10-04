@@ -79,11 +79,15 @@ class CharacterSheet(PageBase):
         for statname, statdata in self.character.abilitiescore_vars.items():
             print(f"stat: {statname}, score: {statdata["score"].get()}, modifier: {statdata["modifier"].get()}")
 
+        # --- Offense Defense Data ---
+        middleframe = ttk.Frame(container)
+        middleframe.grid(column=1, row=1, sticky='nsew')
+
         # --- Right Side Frame ---
         rightsideframe = ttk.Frame(container, style="Right.TFrame", padding=10)
-        rightsideframe.grid(column=1, row=1, columnspan=2, sticky="nsew", padx=(5, 0))
+        rightsideframe.grid(column=2, row=1, sticky="nsew", padx=(5, 0))
         
-        # Example content for the right side
+        # Placeholder content for the right side
         right_label = ttk.Label(rightsideframe, text="Inventory / Notes")
         right_label.pack()
         

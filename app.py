@@ -13,7 +13,7 @@ class AppController:
         self.root = root
         self.current_page = None
 
-        # The controller sets the theme and creates the main view
+        # Sets the theme and creates the main view
         self.style = ttk.Style()
         self.style.theme_use('classic')
         self.view = MainView(root, self)

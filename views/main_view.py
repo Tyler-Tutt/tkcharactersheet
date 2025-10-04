@@ -6,8 +6,9 @@ class MainView(ttk.Frame):
     The main user interface shell for the application.
     This class is responsible for building the static UI components like the
     menu, status bar, and the main content area, but it delegates all
-    actions and logic to the controller.
+    actions and logic to the controller (app.py).
     """
+    # master = root, controller = AppController
     def __init__(self, master, controller):
         super().__init__(master)
         self.master = master

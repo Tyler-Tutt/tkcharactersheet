@@ -27,3 +27,5 @@
     .\.venv_win\Scripts\activate
 ## When installing a new library
     pip freeze > requirements.txt
+
+# TODO Add a License

@@ -65,12 +65,11 @@ def get_character_list():
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("SELECT name FROM characters ORDER BY name ASC")
-    # Use a list comprehension to extract the name from each row tuple
+    # List comprehension to extract the name from each row tuple
     characters = [row['name'] for row in cursor.fetchall()]
     conn.close()
     return characters
 
-# --- ADD THIS NEW FUNCTION ---
 def load_character(character_name):
     """Fetches a specific character's data from the database."""
     conn = get_db_connection()
