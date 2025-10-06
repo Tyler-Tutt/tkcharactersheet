@@ -56,13 +56,13 @@ class AbilityScoreFrame(ttk.Frame):
         self.columnconfigure(3, weight=2)
 
         # Stat Label, Score, and Modifier Score
-        ttk.Label(self, text=ability_name).grid(column=0, row=0, sticky="w", pady=2)
-        ttk.Entry(self, textvariable=score_var, width=5).grid(column=0, row=1, sticky="w", pady=2)
-        ttk.Label(self, textvariable=modifier_var).grid(column=0, row=2, sticky="w", pady=2)
+        ttk.Label(self, text=ability_name).grid(column=0, row=0, pady=2)
+        ttk.Entry(self, textvariable=score_var, width=5, justify='center').grid(column=0, row=1, pady=2)
+        ttk.Label(self, textvariable=modifier_var).grid(column=0, row=2, pady=2)
 
         # Proficiency Checkboxes, Skill Scores, Skill Names
         for j, skill in enumerate(skills_list):
             prof_var = skill_vars_dict[skill]["proficient"]
             ttk.Checkbutton(self, variable=prof_var).grid(column=1, row=j, pady=2)
-            ttk.Entry(self).grid(column=2, row=j, pady=2)
+            ttk.Entry(self, justify='center').grid(column=2, row=j, pady=2)
             ttk.Label(self, text=skill).grid(column=3, row=j, pady=2)

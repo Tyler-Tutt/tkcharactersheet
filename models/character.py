@@ -20,7 +20,13 @@ class Character:
             'player_name': tk.StringVar(value="Player Name"),
             'race': tk.StringVar(value="Race"),
             'alignment': tk.StringVar(value="Alignment"),
-            'experience_points': tk.StringVar(value="Experience Points")
+            'experience_points': tk.StringVar(value="Experience Points"),
+            'armor_class': tk.IntVar(value=10),
+            'initiative': tk.IntVar(value=0),
+            'speed': tk.IntVar(value=30),
+            'max_hp': tk.IntVar(value=10),
+            'current_hp': tk.IntVar(value=10),
+            'temp_hp': tk.IntVar(value=0)
         }
 
         self.proficiency_bonus = tk.IntVar(value=2) # Start with +2 for level 1

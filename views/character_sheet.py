@@ -3,7 +3,6 @@ from tkinter import ttk
 from .pagebase import PageBase
 from .components.character_sheet_components import CharacterHeaderFrame, AbilityScoreFrame
 from models.character import Character
-import database
 
 class CharacterSheet(PageBase):
     """TTRPG Character Sheet Module"""
@@ -18,7 +17,7 @@ class CharacterSheet(PageBase):
         style.configure('Background.TFrame', background="#AD1919", relief='solid', borderwidth=4) # Main container
         style.configure('Stats.TFrame', background="#580DAD") # Left side
         style.configure('Right.TFrame', background="#379611") # Right side
-        style.configure('characterbackgroundframe.TFrame', background="#119682") # Right side
+        style.configure('characterbackgroundframe.TFrame', background="#119682") # Top
         style.configure('abilityscore.TFrame', background="#116A96") # Ability Score Frames
 
         # --- Main Container Frame (3x3 Table) ---
@@ -28,7 +27,7 @@ class CharacterSheet(PageBase):
         container.columnconfigure(0, weight=1) # Left Column
         container.columnconfigure(1, weight=1) # Middle Column
         container.columnconfigure(2, weight=1) # Right Column
-        container.rowconfigure(0, weight=0) # Character Background Frame Row
+        container.rowconfigure(0, weight=0) # Character Background [Top] Row (Colspan=3)
         container.rowconfigure(1, weight=1) # Main content row should expand
 
         # --- Top Pane: Character Background ---
@@ -41,6 +40,7 @@ class CharacterSheet(PageBase):
         stats_frame.grid(column=0, row=1, sticky="nsew", padx=(0, 5))
         stats_frame.columnconfigure(0, weight=1)
         stats_frame.columnconfigure(1, weight=1)
+        stats_frame.columnconfigure(2, weight=1)
 
         # --- Proficiency & Inspiration ---
         self.proficiency_bonus = tk.IntVar(value=0)
@@ -79,17 +79,40 @@ class CharacterSheet(PageBase):
         for statname, statdata in self.character.abilitiescore_vars.items():
             print(f"stat: {statname}, score: {statdata["score"].get()}, modifier: {statdata["modifier"].get()}")
 
-        # --- Offense Defense Data ---
+        # --- Middle Column - Offense Defense Data ---
         middleframe = ttk.Frame(container)
         middleframe.grid(column=1, row=1, sticky='nsew')
+        middleframe.columnconfigure(0, weight=1)
+
+        # --- AC, Initiative, Speed ---
+        ac_init_speed_frame = ttk.Frame(middleframe)
+        ac_init_speed_frame.columnconfigure((0,1,2), weight=1)
+        ac_init_speed_frame.grid(row=0, column=0, sticky="ew", pady=(0, 10))
+
+        # Armor Class
+        ttk.Entry(ac_init_speed_frame, textvariable=self.character.char_vars['armor_class'], justify='center').grid(row=0, column=0, sticky='ew')
+        ttk.Label(ac_init_speed_frame, text="Armor Class", anchor='center').grid(row=1, column=0)
+
+        # Initiative
+        ttk.Entry(ac_init_speed_frame, textvariable=self.character.char_vars['initiative'], justify='center').grid(row=0, column=1, sticky='ew', padx=5)
+        ttk.Label(ac_init_speed_frame, text="Initiative", anchor='center').grid(row=1, column=1)
+
+        # Speed
+        ttk.Entry(ac_init_speed_frame, textvariable=self.character.char_vars['speed'], justify='center').grid(row=0, column=2, sticky='ew')
+        ttk.Label(ac_init_speed_frame, text="Speed", anchor='center').grid(row=1, column=2)
+
+        # Placeholder content
+        # middle_label = ttk.Label(middleframe, text="Inventory / Notes")
+        # middle_label.grid(column=0, row=0)
 
         # --- Right Side Frame ---
         rightsideframe = ttk.Frame(container, style="Right.TFrame", padding=10)
         rightsideframe.grid(column=2, row=1, sticky="nsew", padx=(5, 0))
+        rightsideframe.columnconfigure(0, weight=1)
         
         # Placeholder content for the right side
         right_label = ttk.Label(rightsideframe, text="Inventory / Notes")
-        right_label.pack()
+        right_label.grid(column=0, row=0)
         
     def save_character(self):
         """Public method to trigger the model's save functionality."""
