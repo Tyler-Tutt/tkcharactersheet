@@ -104,7 +104,6 @@ class Character:
             )
         self.update_proficiency_bonus()
 
-
     def save(self):
         """Gathers the data and saves it to the database."""
         # Get the character's name to use as the primary key
