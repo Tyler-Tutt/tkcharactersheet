@@ -19,6 +19,7 @@ class AppController:
         self.view = MainView(root, self)
 
         # Bindings are controller logic
+        #TODO Ensure bindings work with both lowercase & uppercase (for case when capslock is on)
         self.root.protocol("WM_DELETE_WINDOW", self.quit_app)
         self.root.bind('<Control-q>', self.quit_app)
         self.root.bind('<Control-r>', self.restart_app)

@@ -19,6 +19,7 @@ class CharacterSheet(PageBase):
         style.configure('Right.TFrame', background="#379611") # Right side
         style.configure('characterbackgroundframe.TFrame', background="#119682") # Top
         style.configure('abilityscore.TFrame', background="#116A96") # Ability Score Frames
+        style.configure('Highlight.TLabel', background='yellow', foreground='black')
 
         # --- Main Container Frame (3x3 Table) ---
         container = ttk.Frame(self, style="Background.TFrame", padding=10)
@@ -40,14 +41,14 @@ class CharacterSheet(PageBase):
 
         # --- Proficiency & Inspiration Frame ---
         proficiency_inspiration_frame = ttk.Frame(stats_frame)
-        proficiency_inspiration_frame.columnconfigure(0, weight=1)
+        proficiency_inspiration_frame.columnconfigure((0,1,2,3), weight=1)
         proficiency_inspiration_frame.grid(column=0, row=0, sticky='ew')
 
         # --- Proficiency & Inspiration ---
         self.proficiency_bonus = tk.IntVar(value=0)
         self.inspiration = tk.BooleanVar()
-        ttk.Entry(proficiency_inspiration_frame, textvariable=self.character.proficiency_bonus).grid(column=0, row=0)
-        ttk.Label(proficiency_inspiration_frame, text="Proficiency Bonus").grid(column=1, row=0, sticky='ew')
+        ttk.Entry(proficiency_inspiration_frame, textvariable=self.character.proficiency_bonus).grid(column=0, row=0, columnspan=2)
+        ttk.Label(proficiency_inspiration_frame, text="Proficiency Bonus", style="Highlight.TLabel").grid(column=2, row=0, sticky='ew', columnspan=2)
         ttk.Checkbutton(proficiency_inspiration_frame, text="Inspiration", variable=self.inspiration).grid(column=0, row=1,  columnspan=2, sticky='ew', pady=2)
 
         # --- Ability Score Frames ---
@@ -104,29 +105,26 @@ class CharacterSheet(PageBase):
         # --- Right Side Frame ---
         rightframe = ttk.Frame(container, style="Right.TFrame")
         rightframe.columnconfigure(0, weight=1) # Allow content to fill the column
+        # rightframe.rowconfigure(0, weight=1) # Allow content to fill the column
         rightframe.grid(column=2, row=1, sticky="nsew")
 
         #TODO Implement Text Area w/ Hover Text from Database?
         # --- Features & Traits ---
         features_traits_frame = ttk.Frame(rightframe)
         features_traits_frame.columnconfigure(0, weight=1)
-        features_traits_frame.columnconfigure(1, weight=1)
-        features_traits_frame.columnconfigure(2, weight=1)
-        features_traits_frame.grid(row=0, column=0, sticky='ew')
+        features_traits_frame.grid(row=0, column=0, sticky='nsew')
 
-        # Armor Class
-        ttk.Label(features_traits_frame, text="Features & Traits", anchor='center').grid(column=0, row=0)
-        ttk.Entry(features_traits_frame, textvariable=self.character.char_vars['armor_class'], justify='center').grid(column=0, row=1, sticky='')
-        ttk.Label(features_traits_frame, text="Features & Traits", anchor='center').grid(column=0, row=2)
-        ttk.Entry(features_traits_frame, textvariable=self.character.char_vars['armor_class'], justify='center').grid(column=0, row=3, sticky='')
-        ttk.Label(features_traits_frame, text="Features & Traits", anchor='center').grid(column=1, row=0)
-        ttk.Entry(features_traits_frame, textvariable=self.character.char_vars['armor_class'], justify='center').grid(column=1, row=1, sticky='')
-        ttk.Label(features_traits_frame, text="Features & Traits", anchor='center').grid(column=2, row=0)
-        ttk.Entry(features_traits_frame, textvariable=self.character.char_vars['armor_class'], justify='center').grid(column=2, row=1, sticky='')
-        
-        # # Placeholder content for the right side
-        # right_label = ttk.Label(rightsideframe, text="Inventory / Notes")
-        # right_label.grid(column=0, row=0)
+        # Features & Traits Box
+        ttk.Label(features_traits_frame, text="Features & Traits", anchor='center').grid(column=0, row=0, sticky='nsew',columnspan=4)
+        notes_area = tk.Text(features_traits_frame, wrap='word', relief='sunken', borderwidth=2)
+        notes_area.grid(column=0, row=1, sticky='nsew')
+        # ttk.Entry(features_traits_frame, textvariable=self.character.char_vars['armor_class'], justify='center').grid(column=0, row=1, sticky='nsew',columnspan=3)
+        # ttk.Label(features_traits_frame, text="Features & Traits", anchor='center').grid(column=0, row=2)
+        # ttk.Entry(features_traits_frame, textvariable=self.character.char_vars['armor_class'], justify='center').grid(column=0, row=3, sticky='')
+        # ttk.Label(features_traits_frame, text="Features & Traits", anchor='center').grid(column=1, row=0)
+        # ttk.Entry(features_traits_frame, textvariable=self.character.char_vars['armor_class'], justify='center').grid(column=1, row=1, sticky='')
+        # ttk.Label(features_traits_frame, text="Features & Traits", anchor='center').grid(column=2, row=0)
+        # ttk.Entry(features_traits_frame, textvariable=self.character.char_vars['armor_class'], justify='center').grid(column=2, row=1, sticky='')
         
     def save_character(self):
         """Public method to trigger the model's save functionality."""
