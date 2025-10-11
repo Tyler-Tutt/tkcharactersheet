@@ -1,5 +1,8 @@
 # Multi-Platform Character Sheet
 - Windows, Linux, MacOS, Android, iOS
+- Python Backend
+- Flet (Python) Frontend
+- SQLite Database
 
 # File Structure:
 - Project folder on Windows file system
@@ -7,7 +10,7 @@
 - Windows for testing & file storage
 
 # Environments:
-- pip's (libraries) need to be maintained between both Linux & Windows
+- pip's (libraries) need to be maintained in (installed in) both the Linux & Windows Virtual Environments
 
 # Initial Dev Environment:
 ## Create Linux Virtual Environment:
