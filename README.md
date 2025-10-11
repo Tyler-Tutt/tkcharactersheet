@@ -1,5 +1,5 @@
-# Windows & Linux Compatible TTRPG Character Sheet
-- MacOS Not Supported
+# Multi-Platform Character Sheet
+- Windows, Linux, MacOS, Android, iOS
 
 # File Structure:
 - Project folder on Windows file system
