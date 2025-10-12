@@ -24,7 +24,14 @@ def main(page: ft.Page):
         # A row for the main content areas
         ft.Row(
             # Use a Wrap control to let cards flow to the next line if space is tight
-            controls=[ft.Wrap(spacing=10, run_spacing=10, controls=ability_cards)],
+            controls=[
+                ft.Row(
+                    wrap=True, 
+                    spacing=10, 
+                    run_spacing=10, 
+                    controls=ability_cards
+                )
+            ],
             # In a later step, you'd add the middle and right columns here
         )
     )
