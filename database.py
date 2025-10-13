@@ -1,8 +1,6 @@
 import sqlite3
 import json
 
-# TODO Figure out how to save/load a character's sheet/data
-
 DATABASE_FILE = "dnd5e.db"
 
 def get_db_connection():

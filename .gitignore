@@ -2,3 +2,6 @@ __pycache__
 .venv/
 .venv_win
 user_data/
+storage
+
+# .vscode is not included as it contains data for the "bookmarks" extension

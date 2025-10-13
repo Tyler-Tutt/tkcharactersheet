@@ -45,8 +45,6 @@ def main(page: ft.Page):
         # 4. Tell Flet to redraw the page
         page.update()
 
-    
-
     # --- Build UI Components (pass the handler to the constructor) ---
     ability_cards = []
     for ability_name in model.abilities_list:
