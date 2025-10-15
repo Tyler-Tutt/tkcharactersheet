@@ -6,7 +6,7 @@ import database
 def main(page: ft.Page):
     # --- Page and Model Setup ---
     page.title = "Flet Character Sheet"
-    page.scroll = ft.ScrollMode.ADAPTIVE
+    page.scroll = ft.ScrollMode.ALWAYS
     model = CharacterModel()
 
     # --- Build UI View ---

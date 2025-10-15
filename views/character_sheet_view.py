@@ -3,16 +3,14 @@ from models.character_model import CharacterModel
 
 class CharacterSheetView(ft.Container):
     def __init__(self, model: CharacterModel):
-        super().__init__()
+        super().__init__(expand=True)
         self.model = model
-        # We create the controls here so they can be accessed later
-        self.header = self._create_character_header()
-        self.ability_cards = self._create_ability_cards()
+        self.content = self.build()
 
     def build(self):
-        # The build method returns the root control for this view
+        self.header = self._create_character_header()
+        self.ability_cards = self._create_ability_cards()
         return ft.Column(
-            expand=True,
             controls=[
                 self.header,
                 ft.Divider(height=20),

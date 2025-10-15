@@ -1,7 +1,7 @@
 # Multi-Platform Character Sheet
 - Windows, Linux, MacOS, Android, iOS
 - Python Backend
-- Flet (Python) Frontend
+- [Flet GUI](https://flet.dev/docs/)
 - SQLite Database
 
 # File Structure:
