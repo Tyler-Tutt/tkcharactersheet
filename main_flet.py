@@ -1,19 +1,18 @@
 import flet as ft
 from models.character_model import CharacterModel
-from views.character_sheet_view import CharacterSheetView # Import the new view
+from views.character_sheet_view import CharacterSheetView
 import database
 
 def main(page: ft.Page):
-    # --- 1. Page and Model Setup ---
+    # --- Page and Model Setup ---
     page.title = "Flet Character Sheet"
     page.scroll = ft.ScrollMode.ADAPTIVE
     model = CharacterModel()
 
-    # --- 2. Build UI View ---
-    # The view is now a separate class that builds itself
+    # --- Build UI View ---
     view = CharacterSheetView(model)
 
-    # --- 3. Controller Logic / Event Handlers ---
+    # --- Controller Logic / Event Handlers ---
     def on_score_change(e: ft.ControlEvent):
         """Handles changes to any ability score TextField."""
         ability_name = e.control.data
@@ -38,7 +37,7 @@ def main(page: ft.Page):
         """Saves the current character data."""
         # Update model from the view's controls
         model.character_name = view.header.content.controls[0].controls[0].value
-        # ... you would continue to update the rest of the model's fields here
+        #TODO continue to update the rest of the model's fields here
         
         if model.save():
             page.snack_bar = ft.SnackBar(ft.Text(f"Saved {model.character_name}!"), open=True)
@@ -54,8 +53,7 @@ def main(page: ft.Page):
             char_to_load = character_dropdown.value
             if char_to_load:
                 model.load(char_to_load)
-                # To refresh the entire UI, we can create a new view instance
-                # and replace the old one.
+                # To refresh the entire UI, we can create a new view instance and replace the old one.
                 new_view = CharacterSheetView(model)
                 page.controls[0] = new_view # Assumes the view is the first control
                 connect_event_handlers(new_view) # Re-connect handlers
