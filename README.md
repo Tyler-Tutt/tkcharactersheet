@@ -1,3 +1,5 @@
+# It's a Character Sheet. Not a Character App.
+
 # Multi-Platform Character Sheet
 - Windows, Linux, MacOS, Android, iOS
 - Python Backend

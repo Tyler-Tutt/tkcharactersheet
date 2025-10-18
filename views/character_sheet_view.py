@@ -15,9 +15,9 @@ class CharacterSheetView(ft.Container):
                 self.header,
                 ft.Divider(height=20),
                 ft.Row(
-                    wrap=True,
-                    spacing=10,
-                    run_spacing=10,
+                    # wrap=True,
+                    # spacing=10,
+                    # run_spacing=10,
                     controls=self.ability_cards
                 )
             ]
@@ -26,44 +26,55 @@ class CharacterSheetView(ft.Container):
     def _create_character_header(self):
         """Builds and returns the top header UI as an ft.Container."""
         return ft.Container(
-            padding=10,
-            border=ft.border.all(2, ft.Colors.OUTLINE),
-            border_radius=8,
-            content=ft.Row(
-                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                controls=[
-                    # --- Left Column ---
-                    ft.Column(
-                        expand=1,
-                        controls=[
-                            ft.TextField(label="Character Name", value=self.model.charactername),
-                            ft.TextField(label="Class & Level", value=self.model.characterclass),
-                        ]
-                    ),
-                    # --- Right Column ---
-                    ft.Column(
-                        expand=1,
-                        controls=[
-                            # First Row in the Right Column
-                            ft.Row(
-                                controls=[
-                                    ft.TextField(label="Background", value=self.model.background, expand=1),
-                                    ft.TextField(label="Player Name", value=self.model.player_name, expand=1),
-                                ]
-                            ),
-                            # Second Row in the Right Column
-                            ft.Row(
-                                controls=[
-                                    ft.TextField(label="Race", value=self.model.race, expand=1),
-                                    ft.TextField(label="Alignment", value=self.model.alignment, expand=1),
-                                    ft.TextField(label="Experience Points", value=self.model.experience_points, expand=1),
-                                ]
-                            )
-                        ]
-                    )
-                ]
+    padding=10,
+    border=ft.border.all(2, ft.Colors.OUTLINE),
+    border_radius=8,
+    content=ft.Row(
+        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+        controls=[
+            # --- Left Column wrapped in its own Container ---
+            ft.Container(
+                content=ft.Column(
+                    controls=[
+                        ft.TextField(label="Character Name", value=self.model.charactername),
+                        ft.TextField(label="Class & Level", value=self.model.characterclass),
+                    ]
+                ),
+                expand=1,
+                bgcolor=ft.Colors.AMBER_900, # Style for left column
+                padding=5,                   # Style for left column
+                border_radius=5              # Style for left column
+            ),
+            
+            # --- Right Column wrapped in its own Container ---
+            ft.Container(
+                content=ft.Column(
+                    controls=[
+                        # First Row in the Right Column
+                        ft.Row(
+                            controls=[
+                                ft.TextField(label="Background", value=self.model.background, expand=1),
+                                ft.TextField(label="Player Name", value=self.model.player_name, expand=1),
+                            ]
+                        ),
+                        # Second Row in the Right Column
+                        ft.Row(
+                            controls=[
+                                ft.TextField(label="Race", value=self.model.race, expand=1),
+                                ft.TextField(label="Alignment", value=self.model.alignment, expand=1),
+                                ft.TextField(label="Experience Points", value=self.model.experience_points, expand=1),
+                            ]
+                        )
+                    ]
+                ),
+                expand=2,
+                bgcolor=ft.Colors.PURPLE, # Style for right column
+                padding=5,                   # Style for right column
+                border_radius=5              # Style for right column
             )
-        )
+        ]
+    )
+)
 
     def _create_ability_cards(self):
         """Creates the UI for all ability scores."""
@@ -98,7 +109,7 @@ class CharacterSheetView(ft.Container):
             )
 
         return ft.Container(
-            width=250,
+            # width=250,
             padding=10,
             border=ft.border.all(2, ft.Colors.OUTLINE),
             border_radius=8,
