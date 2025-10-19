@@ -3,6 +3,9 @@ from models.character_model import CharacterModel
 from views.character_sheet_view import CharacterSheetView
 import database
 
+#TODO Fix Saving & Loading functionality
+#TODO Add Keybinds https://flet.dev/docs/cookbook/keyboard-shortcuts
+
 def main(page: ft.Page):
     # --- Page and Model Setup ---
     page.title = "Flet Character Sheet"

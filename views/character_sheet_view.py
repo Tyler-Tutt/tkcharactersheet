@@ -1,6 +1,9 @@
 import flet as ft
 from models.character_model import CharacterModel
 
+#TODO Layout Ability Score, AC/HP/Speed, and Features Column
+#TODO Add rest of Background fields to Header
+
 class CharacterSheetView(ft.Container):
     def __init__(self, model: CharacterModel):
         super().__init__(expand=True)
@@ -9,16 +12,17 @@ class CharacterSheetView(ft.Container):
 
     def build(self):
         self.header = self._create_character_header()
-        self.ability_cards = self._create_ability_cards()
+        self.ability_score_frame = self._create_second_row_page_frame()
         return ft.Column(
             controls=[
                 self.header,
                 ft.Divider(height=20),
+                self.ability_score_frame,
                 ft.Row(
                     # wrap=True,
                     # spacing=10,
                     # run_spacing=10,
-                    controls=self.ability_cards
+                    # controls=self.ability_cards
                 )
             ]
         )
@@ -32,7 +36,7 @@ class CharacterSheetView(ft.Container):
             content=ft.Row(
                 alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                 controls=[
-                    # --- Left Column wrapped in its own Container ---
+                    # --- Name & Class Container ---
                     ft.Container(
                         expand=1,
                         bgcolor=ft.Colors.AMBER_900,
@@ -41,12 +45,12 @@ class CharacterSheetView(ft.Container):
                         content=ft.Column(
                             controls=[
                                 ft.TextField(label="Character Name", value=self.model.charactername),
-                                ft.TextField(label="Class & Level", value=self.model.characterclass),
+                                ft.TextField(label="Class", value=self.model.characterclass),
                             ]
                         ),
                     ),
                     
-                    # --- Right Column wrapped in its own Container ---
+                    # --- Background Header Column ---
                     ft.Container(
                         expand=2,
                         bgcolor=ft.Colors.PURPLE,
@@ -57,6 +61,7 @@ class CharacterSheetView(ft.Container):
                                 # First Row in the Right Column
                                 ft.Row(
                                     controls=[
+                                        ft.TextField(label="Level", value=self.model.level, expand=1),
                                         ft.TextField(label="Background", value=self.model.background, expand=1),
                                         ft.TextField(label="Player Name", value=self.model.player_name, expand=1),
                                     ]
@@ -76,8 +81,52 @@ class CharacterSheetView(ft.Container):
             )
         )
 
+    def _create_second_row_page_frame(self):
+        "Builds and returns a container with a row which has 3 Columns"
+        self.ability_cards = self._create_ability_cards()
+        return ft.Container(
+            bgcolor=ft.Colors.LIGHT_BLUE,
+            border=ft.border.all(2),
+            padding=5,
+            content=ft.Row(
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                controls=[
+                    # --- Ability Score Column ---
+                    ft.Container(
+                        expand=1,
+                        bgcolor=ft.Colors.GREY,
+                        content=ft.Column(
+                            controls=[
+                                *self.ability_cards
+                            ]
+                        )
+                    ),
+                    # --- AC/HP/Speed Column ---
+                    ft.Container(
+                        expand=1,
+                        bgcolor=ft.Colors.AMBER,
+                        content=ft.Column(
+                            controls=[
+                                ft.Text("Hello")
+                            ]
+                        )
+                    ),
+                    # --- Features & Traits Column ---
+                    ft.Container(
+                        expand=1,
+                        bgcolor=ft.Colors.GREY,
+                        content=ft.Column(
+                            controls=[
+                                ft.Text("Hello")
+                            ]
+                        )
+                    )
+                ]
+            )
+        )
+
     def _create_ability_cards(self):
-        """Creates the UI for all ability scores."""
+        """Creates the UI for all ability scores using a Loop of the abilities_list."""
         cards = []
         for ability_name in self.model.abilities_list:
             card = self._create_ability_score_card(ability_name)
@@ -89,6 +138,7 @@ class CharacterSheetView(ft.Container):
         ability_data = self.model.scores[ability_name]
         skills_map = self.model.skills_map[ability_name]
 
+        # 
         score_field = ft.TextField(
             value=str(ability_data["score"]),
             text_align=ft.TextAlign.CENTER,
