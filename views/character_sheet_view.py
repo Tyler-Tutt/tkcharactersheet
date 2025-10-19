@@ -58,7 +58,7 @@ class CharacterSheetView(ft.Container):
                         border_radius=5,
                         content=ft.Column(
                             controls=[
-                                # First Row in the Right Column
+                                # First Row of Background Header
                                 ft.Row(
                                     controls=[
                                         ft.TextField(label="Level", value=self.model.level, expand=1),
@@ -66,7 +66,7 @@ class CharacterSheetView(ft.Container):
                                         ft.TextField(label="Player Name", value=self.model.player_name, expand=1),
                                     ]
                                 ),
-                                # Second Row in the Right Column
+                                # Second Row of Background Header
                                 ft.Row(
                                     controls=[
                                         ft.TextField(label="Race", value=self.model.race, expand=1),
@@ -94,6 +94,7 @@ class CharacterSheetView(ft.Container):
                     # --- Ability Score Column ---
                     ft.Container(
                         expand=1,
+                        padding=10,
                         bgcolor=ft.Colors.GREY,
                         content=ft.Column(
                             controls=[
@@ -138,7 +139,6 @@ class CharacterSheetView(ft.Container):
         ability_data = self.model.scores[ability_name]
         skills_map = self.model.skills_map[ability_name]
 
-        # 
         score_field = ft.TextField(
             value=str(ability_data["score"]),
             text_align=ft.TextAlign.CENTER,
@@ -158,19 +158,30 @@ class CharacterSheetView(ft.Container):
                 )
             )
 
+        # --- Individual Ability Score Containers --- 
         return ft.Container(
             # width=250,
             padding=10,
+            bgcolor=ft.Colors.LIGHT_GREEN,
             border=ft.border.all(2, ft.Colors.OUTLINE),
             border_radius=8,
-            content=ft.Column(
-                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            content=ft.Row(
+                vertical_alignment=ft.CrossAxisAlignment.CENTER,
                 controls=[
-                    ft.Text(ability_name.upper(), size=16, weight=ft.FontWeight.BOLD),
-                    score_field,
-                    modifier_text,
-                    ft.Divider(),
-                    *skills_controls
+                    ft.Column(
+                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                        controls=[
+                            ft.Text(ability_name.upper(), size=16, weight=ft.FontWeight.BOLD),
+                            score_field,
+                            modifier_text,
+                            # ft.Divider(),
+                        ]
+                    ),
+                    ft.Column(
+                        controls=[
+                            *skills_controls
+                        ]
+                    )
                 ]
             ),
             # Store references to controls that need to be updated by the controller
