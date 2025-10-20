@@ -2,7 +2,6 @@ import flet as ft
 from models.character_model import CharacterModel
 
 #TODO Layout Ability Score, AC/HP/Speed, and Features Column
-#TODO Add rest of Background fields to Header
 
 class CharacterSheetView(ft.Container):
     def __init__(self, model: CharacterModel):
@@ -153,7 +152,9 @@ class CharacterSheetView(ft.Container):
             skills_controls.append(
                 ft.Row(
                     controls=[
-                        ft.Checkbox(label=skill, value=ability_data["skills"][skill]["proficient"]),
+                        ft.Checkbox(value=ability_data["skills"][skill]["proficient"]),
+                        ft.TextField(width=50),
+                        ft.Text(skill, selectable=True)
                     ]
                 )
             )
