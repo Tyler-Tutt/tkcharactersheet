@@ -147,6 +147,8 @@ class CharacterSheetView(ft.Container):
 
         modifier_text = ft.Text(self.model.get_modifier_for(ability_name), size=20)
 
+        ability_name_text = ft.Text(ability_name.upper(), size=16, weight=ft.FontWeight.BOLD)
+
         skills_controls = []
         for skill in skills_map:
             skills_controls.append(
@@ -186,5 +188,9 @@ class CharacterSheetView(ft.Container):
                 ]
             ),
             # Store references to controls that need to be updated by the controller
-            data={"score_field": score_field, "modifier_text": modifier_text}
+            data={
+                "score_field": score_field,
+                "modifier_text": modifier_text,
+                "ability_name_text": ability_name_text
+            }
         )

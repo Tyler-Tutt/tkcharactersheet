@@ -9,8 +9,9 @@ import database
 def main(page: ft.Page):
     # --- Page and Model Setup ---
     page.title = "Flet Character Sheet"
-    page.scroll = ft.ScrollMode.AUTO,
-    # page.window.maximized = True
+    page.scroll = ft.ScrollMode.ADAPTIVE
+    page.window.maximized = True
+
     model = CharacterModel()
 
     # --- Build UI View ---
@@ -29,9 +30,14 @@ def main(page: ft.Page):
         # Update the UI
         new_modifier = model.get_modifier_for(ability_name)
         for card in view.ability_cards:
-            # The card's content is a Column, and its first child is the name
-            card_ability_name = card.content.controls[0].value
+            # --- THIS IS THE BETTER WAY ---
+            # Access the ability name Text control directly from data
+            card_ability_name_text = card.data["ability_name_text"]
+            card_ability_name = card_ability_name_text.value
+            # --- END BETTER WAY ---
+
             if card_ability_name.lower() == ability_name.lower():
+                # Access the modifier Text control directly from data
                 modifier_text_control = card.data["modifier_text"]
                 modifier_text_control.value = new_modifier
                 break
@@ -40,11 +46,11 @@ def main(page: ft.Page):
     def save_character(e):
         """Saves the current character data."""
         # Update model from the view's controls
-        model.character_name = view.header.content.controls[0].controls[0].value
+        model.charactername = view.header.content.controls[0].controls[0].value
         #TODO continue to update the rest of the model's fields here
         
         if model.save():
-            page.snack_bar = ft.SnackBar(ft.Text(f"Saved {model.character_name}!"), open=True)
+            page.snack_bar = ft.SnackBar(ft.Text(f"Saved {model.charactername}!"), open=True)
         else:
             page.snack_bar = ft.SnackBar(ft.Text("Save failed. Check character name."), open=True)
         page.update()
@@ -60,7 +66,7 @@ def main(page: ft.Page):
                 # To refresh the entire UI, we can create a new view instance and replace the old one.
                 new_view = CharacterSheetView(model)
                 page.controls[0] = new_view # Assumes the view is the first control
-                connect_event_handlers(new_view) # Re-connect handlers
+                connect_event_handlers(new_view) # Re-connect
                 page.dialog.open = False
                 page.update()
 
