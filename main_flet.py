@@ -10,7 +10,7 @@ def main(page: ft.Page):
     # --- Page and Model Setup ---
     page.title = "Flet Character Sheet"
     page.scroll = ft.ScrollMode.ADAPTIVE
-    page.window.maximized = True
+    # page.window.maximized = True
 
     model = CharacterModel()
 
@@ -22,7 +22,7 @@ def main(page: ft.Page):
         """Handles changes to any ability score TextField."""
         ability_name = e.control.data
         try:
-            new_score = int(e.control.value)
+            new_score = int(e.control.data)
             model.scores[ability_name]["score"] = new_score
         except (ValueError, TypeError):
             model.scores[ability_name]["score"] = 10 # Revert to default
@@ -30,14 +30,12 @@ def main(page: ft.Page):
         # Update the UI
         new_modifier = model.get_modifier_for(ability_name)
         for card in view.ability_cards:
-            # --- THIS IS THE BETTER WAY ---
-            # Access the ability name Text control directly from data
+            # Access the ability name Text-control directly from data
             card_ability_name_text = card.data["ability_name_text"]
             card_ability_name = card_ability_name_text.value
-            # --- END BETTER WAY ---
 
             if card_ability_name.lower() == ability_name.lower():
-                # Access the modifier Text control directly from data
+                # Access the modifier Text-control directly from data
                 modifier_text_control = card.data["modifier_text"]
                 modifier_text_control.value = new_modifier
                 break
@@ -46,7 +44,7 @@ def main(page: ft.Page):
     def save_character(e):
         """Saves the current character data."""
         # Update model from the view's controls
-        model.charactername = view.header.content.controls[0].controls[0].value
+        model.charactername = view.header.content.charactername.value
         #TODO continue to update the rest of the model's fields here
         
         if model.save():

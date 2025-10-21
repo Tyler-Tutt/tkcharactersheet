@@ -117,11 +117,11 @@ class CharacterModel():
 
     def save(self):
         """Saves the character's data to the database."""
-        if not self.character_name or self.character_name == "Character Name":
+        if not self.charactername or self.charactername == "Character Name":
             print("Save Error: Please enter a character name before saving.")
             return False # Return a status
 
         character_data = self.to_dict()
-        database.save_character(self.character_name, character_data)
-        print(f"Success: Character '{self.character_name}' was saved.")
+        database.save_character(self.charactername, character_data)
+        print(f"Success: Character '{self.charactername}' was saved.")
         return True

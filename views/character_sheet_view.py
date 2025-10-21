@@ -28,6 +28,8 @@ class CharacterSheetView(ft.Container):
 
     def _create_character_header(self):
         """Builds and returns the top header UI as an ft.Container."""
+        charactername = ft.TextField(label="Character Name", value=self.model.charactername)
+
         return ft.Container(
             padding=10,
             border=ft.border.all(2, ft.Colors.OUTLINE),
@@ -43,7 +45,7 @@ class CharacterSheetView(ft.Container):
                         border_radius=5,
                         content=ft.Column(
                             controls=[
-                                ft.TextField(label="Character Name", value=self.model.charactername),
+                                charactername,
                                 ft.TextField(label="Class", value=self.model.characterclass),
                             ]
                         ),
@@ -138,6 +140,7 @@ class CharacterSheetView(ft.Container):
         ability_data = self.model.scores[ability_name]
         skills_map = self.model.skills_map[ability_name]
 
+        # --- Creating NAMED Textfields so as to be retreivable data ---
         score_field = ft.TextField(
             value=str(ability_data["score"]),
             text_align=ft.TextAlign.CENTER,
@@ -146,7 +149,6 @@ class CharacterSheetView(ft.Container):
         )
 
         modifier_text = ft.Text(self.model.get_modifier_for(ability_name), size=20)
-
         ability_name_text = ft.Text(ability_name.upper(), size=16, weight=ft.FontWeight.BOLD)
 
         skills_controls = []
@@ -174,7 +176,7 @@ class CharacterSheetView(ft.Container):
                     ft.Column(
                         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                         controls=[
-                            ft.Text(ability_name.upper(), size=16, weight=ft.FontWeight.BOLD),
+                            ability_name_text,
                             score_field,
                             modifier_text,
                             # ft.Divider(),
