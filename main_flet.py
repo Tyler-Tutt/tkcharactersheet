@@ -22,7 +22,7 @@ def main(page: ft.Page):
         """Handles changes to any ability score TextField."""
         ability_name = e.control.data
         try:
-            new_score = int(e.control.data)
+            new_score = int(e.control.value)
             model.scores[ability_name]["score"] = new_score
         except (ValueError, TypeError):
             model.scores[ability_name]["score"] = 10 # Revert to default
@@ -43,8 +43,8 @@ def main(page: ft.Page):
 
     def save_character(e):
         """Saves the current character data."""
-        # Update model from the view's controls
-        model.charactername = view.header.content.charactername.value
+        # Get charactername from the header's TextField directly
+        model.charactername = view.charactername.value
         #TODO continue to update the rest of the model's fields here
         
         if model.save():
@@ -59,12 +59,32 @@ def main(page: ft.Page):
 
         def load_and_close(e):
             char_to_load = character_dropdown.value
+            # Inside load_and_close
             if char_to_load:
                 model.load(char_to_load)
-                # To refresh the entire UI, we can create a new view instance and replace the old one.
-                new_view = CharacterSheetView(model)
-                page.controls[0] = new_view # Assumes the view is the first control
-                connect_event_handlers(new_view) # Re-connect
+                # Create the new view with the loaded model data
+                new_view = CharacterSheetView(model) 
+
+                # --- More Robust Way (Alternative) ---
+                # Find the existing view and update its content 
+                # (Requires finding the view if not always at index 0)
+                for i, ctrl in enumerate(page.controls):
+                    if isinstance(ctrl, CharacterSheetView):
+                        page.controls[i] = new_view # Replace the old instance
+                        break 
+                else: # If not found (shouldn't happen here)
+                    page.add(new_view) # Add if somehow missing
+
+                # # --- Current Way (Works but is fragile) ---
+                # if page.controls and isinstance(page.controls[0], CharacterSheetView):
+                #     page.controls[0] = new_view # Assumes the view is the first control
+                # else:
+                #     print("Error: Could not find CharacterSheetView to replace.")
+                #     # Handle error appropriately, maybe just add the new view
+                #     page.add(new_view)
+
+                # You MUST reconnect handlers to the controls WITHIN the new_view
+                connect_event_handlers(new_view) 
                 page.dialog.open = False
                 page.update()
 

@@ -28,7 +28,7 @@ class CharacterSheetView(ft.Container):
 
     def _create_character_header(self):
         """Builds and returns the top header UI as an ft.Container."""
-        charactername = ft.TextField(label="Character Name", value=self.model.charactername)
+        self.charactername = ft.TextField(label="Character Name", value=self.model.charactername)
 
         return ft.Container(
             padding=10,
@@ -45,7 +45,7 @@ class CharacterSheetView(ft.Container):
                         border_radius=5,
                         content=ft.Column(
                             controls=[
-                                charactername,
+                                self.charactername,
                                 ft.TextField(label="Class", value=self.model.characterclass),
                             ]
                         ),
