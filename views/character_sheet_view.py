@@ -7,6 +7,21 @@ class CharacterSheetView(ft.Container):
     def __init__(self, model: CharacterModel):
         super().__init__(expand=True)
         self.model = model
+        # --- Store references to controls that need to be updated ---
+        # Header Fields
+        self.charactername_field = ft.TextField(label="Character Name", value=self.model.charactername, data="charactername")
+        self.class_field = ft.TextField(label="Class", value=self.model.characterclass, data="characterclass")
+        self.level_field = ft.TextField(label="Level", value=str(self.model.level), data="level")
+        self.background_field = ft.TextField(label="Background", value=self.model.background, data="background")
+        self.player_name_field = ft.TextField(label="Player Name", value=self.model.player_name, data="player_name")
+        self.race_field = ft.TextField(label="Race", value=self.model.race, data="race")
+        self.alignment_field = ft.TextField(label="Alignment", value=self.model.alignment, data="alignment")
+        self.experience_points_field = ft.TextField(label="Experience Points", value=str(self.model.experience_points), data="experience_points")
+
+        # Ability Cards (will be populated in _create_ability_cards)
+        self.ability_cards = []
+        
+        # Build the UI
         self.content = self.build()
 
     def build(self):
@@ -28,8 +43,7 @@ class CharacterSheetView(ft.Container):
 
     def _create_character_header(self):
         """Builds and returns the top header UI as an ft.Container."""
-        self.charactername = ft.TextField(label="Character Name", value=self.model.charactername)
-
+        # --- We already defined the fields in __init__, so we just use them here ---
         return ft.Container(
             padding=10,
             border=ft.border.all(2, ft.Colors.OUTLINE),
@@ -45,8 +59,8 @@ class CharacterSheetView(ft.Container):
                         border_radius=5,
                         content=ft.Column(
                             controls=[
-                                self.charactername,
-                                ft.TextField(label="Class", value=self.model.characterclass),
+                                self.charactername_field,
+                                self.class_field,
                             ]
                         ),
                     ),
@@ -62,17 +76,17 @@ class CharacterSheetView(ft.Container):
                                 # First Row of Background Header
                                 ft.Row(
                                     controls=[
-                                        ft.TextField(label="Level", value=self.model.level, expand=1),
-                                        ft.TextField(label="Background", value=self.model.background, expand=1),
-                                        ft.TextField(label="Player Name", value=self.model.player_name, expand=1),
+                                        self.level_field,
+                                        self.background_field,
+                                        self.player_name_field,
                                     ]
                                 ),
                                 # Second Row of Background Header
                                 ft.Row(
                                     controls=[
-                                        ft.TextField(label="Race", value=self.model.race, expand=1),
-                                        ft.TextField(label="Alignment", value=self.model.alignment, expand=1),
-                                        ft.TextField(label="Experience Points", value=self.model.experience_points, expand=1),
+                                        self.race_field,
+                                        self.alignment_field,
+                                        self.experience_points_field,
                                     ]
                                 )
                             ]
@@ -84,6 +98,7 @@ class CharacterSheetView(ft.Container):
 
     def _create_second_row_page_frame(self):
         "Builds and returns a container with a row which has 3 Columns"
+        # --- Populate the self.ability_cards list ---
         self.ability_cards = self._create_ability_cards()
         return ft.Container(
             bgcolor=ft.Colors.LIGHT_BLUE,
@@ -99,7 +114,7 @@ class CharacterSheetView(ft.Container):
                         bgcolor=ft.Colors.GREY,
                         content=ft.Column(
                             controls=[
-                                *self.ability_cards
+                                *self.ability_cards  # Unpack the list of cards
                             ]
                         )
                     ),

@@ -48,6 +48,8 @@ class CharacterModel():
 
     def get_modifier_for(self, ability_name):
         """Calculates and returns the modifier string for a given ability."""
+        # Ensure ability_name is capitalized correctly
+        ability_name = ability_name.capitalize()
         score = self.scores.get(ability_name, {}).get("score", 10)
         modifier = (score - 10) // 2
         return f"+{modifier}" if modifier >= 0 else str(modifier)
@@ -76,10 +78,10 @@ class CharacterModel():
 
         # Directly assign attributes
         self.charactername = data.get('charactername', "Unknown")
-        self.characterclass = data.get('class', "Class")
+        self.characterclass = data.get('characterclass', "Class") # Fixed key from 'class'
         self.level = data.get('level', 1)
         self.background = data.get('background', "Background")
-        self.player_name = data.get('player_name', "Player Name")
+        self.player_name = data.get('player_name', "Player Name") # Fixed key from 'playername'
         self.race = data.get('race', "Race")
         self.alignment = data.get('alignment', "Alignment")
         self.experience_points = data.get('experience_points', 0)
@@ -93,7 +95,8 @@ class CharacterModel():
         # Load nested ability data
         if 'abilities' in data:
             self.scores = data['abilities']
-        return True
+        
+        return True # --- ADDED THIS LINE ---
 
     def to_dict(self):
         """Gathers all model data into a Python dictionary for saving."""
@@ -102,7 +105,7 @@ class CharacterModel():
             'characterclass': self.characterclass,
             'level': self.level,
             'background': self.background,
-            'playername': self.player_name,
+            'player_name': self.player_name, # Fixed key to be consistent
             'race': self.race,
             'alignment': self.alignment,
             'experience_points': self.experience_points,
