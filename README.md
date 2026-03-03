@@ -33,4 +33,9 @@
 ## When installing a new library
     pip freeze > requirements.txt
 
-# TODO Add a License
+# TODO 
+- Add a License
+
+# Feature List
+- Scrolling Text Area that records the last actions (took 5 damage, used spell, etc.)
+- Health and Mana (Spell Slot) Bars connected to HP-Text

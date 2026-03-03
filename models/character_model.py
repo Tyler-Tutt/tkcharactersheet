@@ -57,7 +57,7 @@ class CharacterModel():
     def get_proficiency_bonus(self):
         """Calculates and returns Proficiency Bonus based on character level."""
         level = self.level
-        if 1 <= level <= 4:
+        if (1 <= level) and (level <= 4):
             return 2
         elif 5 <= level <= 8:
             return 3

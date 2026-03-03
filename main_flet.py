@@ -6,7 +6,7 @@ import database
 def main(page: ft.Page):
     # --- Page and Model Setup ---
     page.title = "Flet Character Sheet"
-    page.scroll = ft.ScrollMode.ADAPTIVE
+    page.scroll = ft.ScrollMode.AUTO
     # page.window.maximized = True
 
     model = CharacterModel()
@@ -121,11 +121,8 @@ def main(page: ft.Page):
                 # 1. Load data into the existing model
                 if model.load(char_to_load):
                     
-                    # --- THIS IS THE KEY CHANGE ---
                     # 2. Update the existing view from the model
-                    #    (No more rebuilding!)
                     update_view_from_model(model, view)
-                    # --- END OF KEY CHANGE ---
                     
                     page.dialog.open = False
                     page.snack_bar = ft.SnackBar(ft.Text(f"Loaded {char_to_load}!"), open=True)
