@@ -42,7 +42,8 @@ class CharacterModel():
                     for skill in self.skills_map[ability]
                 }
             }
-        
+
+        #TODO Default-Load the last-used character
         if character_to_load:
             self.load(character_to_load)
 
@@ -57,9 +58,9 @@ class CharacterModel():
     def get_proficiency_bonus(self):
         """Calculates and returns Proficiency Bonus based on character level."""
         level = self.level
-        if (1 <= level) and (level <= 4):
+        if (1 <= level) and (level <= 4): # "Long form" syntax
             return 2
-        elif 5 <= level <= 8:
+        elif 5 <= level <= 8: # Syntactic sugar
             return 3
         elif 9 <= level <= 12:
             return 4
@@ -78,10 +79,10 @@ class CharacterModel():
 
         # Directly assign attributes
         self.charactername = data.get('charactername', "Unknown")
-        self.characterclass = data.get('characterclass', "Class") # Fixed key from 'class'
+        self.characterclass = data.get('characterclass', "Class")
         self.level = data.get('level', 1)
         self.background = data.get('background', "Background")
-        self.player_name = data.get('player_name', "Player Name") # Fixed key from 'playername'
+        self.player_name = data.get('player_name', "Player Name")
         self.race = data.get('race', "Race")
         self.alignment = data.get('alignment', "Alignment")
         self.experience_points = data.get('experience_points', 0)
@@ -96,16 +97,16 @@ class CharacterModel():
         if 'abilities' in data:
             self.scores = data['abilities']
         
-        return True # --- ADDED THIS LINE ---
-
-    def to_dict(self):
+        return True
+    
+    def convert_to_dictionary(self):
         """Gathers all model data into a Python dictionary for saving."""
         return {
             'charactername': self.charactername,
             'characterclass': self.characterclass,
             'level': self.level,
             'background': self.background,
-            'player_name': self.player_name, # Fixed key to be consistent
+            'player_name': self.player_name,
             'race': self.race,
             'alignment': self.alignment,
             'experience_points': self.experience_points,
@@ -124,7 +125,7 @@ class CharacterModel():
             print("Save Error: Please enter a character name before saving.")
             return False # Return a status
 
-        character_data = self.to_dict()
+        character_data = self.convert_to_dictionary()
         database.save_character(self.charactername, character_data)
         print(f"Success: Character '{self.charactername}' was saved.")
         return True

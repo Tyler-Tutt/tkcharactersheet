@@ -67,13 +67,20 @@ def main(page: ft.Page):
 
     def save_character(e):
         """Saves the current character data."""
-        # --- MUCH SIMPLER! ---
-        # The model is already up-to-date thanks to the on_change handlers.
         if model.save():
-            page.snack_bar = ft.SnackBar(ft.Text(f"Saved {model.charactername}!"), open=True)
+            page.open(
+                ft.SnackBar(
+                    ft.Text(f"Saved {model.charactername}!"), 
+                    bgcolor=ft.Colors.GREEN_700
+                )
+            )
         else:
-            page.snack_bar = ft.SnackBar(ft.Text("Save failed. Check character name."), open=True)
-        page.update()
+            page.open(
+                ft.SnackBar(
+                    ft.Text("Save failed. Check character name."), 
+                    bgcolor=ft.Colors.ERROR
+                )
+            )
 
     def update_view_from_model(model_data: CharacterModel, view_controls: CharacterSheetView):
         """
@@ -124,15 +131,15 @@ def main(page: ft.Page):
                     # 2. Update the existing view from the model
                     update_view_from_model(model, view)
                     
-                    page.dialog.open = False
-                    page.snack_bar = ft.SnackBar(ft.Text(f"Loaded {char_to_load}!"), open=True)
+                    # Modern Flet: Close the dialog
+                    page.close(dialog) 
+                    
+                    # Modern Flet: Open the SnackBar
+                    page.open(ft.SnackBar(ft.Text(f"Loaded {char_to_load}!"))) 
                 else:
-                    page.snack_bar = ft.SnackBar(ft.Text(f"Failed to load {char_to_load}."), open=True)
-                
-                page.update() # Update to close dialog and show snackbar
+                    page.open(ft.SnackBar(ft.Text(f"Failed to load {char_to_load}.")))
             else:
-                page.dialog.open = False
-                page.update()
+                page.close(dialog)
 
 
         character_dropdown = ft.Dropdown(
@@ -141,7 +148,8 @@ def main(page: ft.Page):
             expand=True
         )
 
-        page.dialog = ft.AlertDialog(
+        # Define the dialog as a local variable rather than assigning to page.dialog
+        dialog = ft.AlertDialog(
             modal=True,
             title=ft.Text("Load Character"),
             content=ft.Container(
@@ -150,12 +158,14 @@ def main(page: ft.Page):
             ),
             actions=[
                 ft.TextButton("Load", on_click=load_and_close),
-                ft.TextButton("Cancel", on_click=lambda e: setattr(page.dialog, 'open', False) or page.update()),
+                # Use page.close() for the cancel button as well
+                ft.TextButton("Cancel", on_click=lambda e: page.close(dialog)),
             ],
             actions_alignment=ft.MainAxisAlignment.END,
         )
-        page.dialog.open = True
-        page.update()
+        
+        # Modern Flet: Open the dialog directly (handles updates and overlays automatically)
+        page.open(dialog)
 
     def connect_event_handlers(view_instance: CharacterSheetView):
         """Connects event handlers to the controls in the view."""

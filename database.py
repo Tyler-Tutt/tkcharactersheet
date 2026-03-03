@@ -4,20 +4,20 @@ import json
 DATABASE_FILE = "dnd5e.db"
 
 def get_db_connection():
-    """Establishes and returns a connection to the SQLite database."""
-    conn = sqlite3.connect(DATABASE_FILE)
+    """Establishes and returns a connection to the SQLite database. i.e. Creates a database Connection object"""
+    connection = sqlite3.connect(DATABASE_FILE)
     
     # Allows access to columns by name
-    conn.row_factory = sqlite3.Row
-    return conn
+    connection.row_factory = sqlite3.Row
+    return connection
 
 def init_db():
     """
     Initializes the database and creates the necessary tables if they
     do not already exist.
     """
-    conn = get_db_connection()
-    cursor = conn.cursor()
+    connection = get_db_connection()
+    cursor = connection.cursor()
     
     # Create a 'users' table.
     # The 'preferences' column will store a JSON string.
@@ -37,16 +37,16 @@ def init_db():
         )
     ''')
     
-    conn.commit()
-    conn.close()
+    connection.commit()
+    connection.close()
 
 def save_character(character_name, character_data):
     """
     Saves a character's data to the database.
     Inserts a new record or replaces an existing one based on the character name.
     """
-    conn = get_db_connection()
-    cursor = conn.cursor()
+    connection = get_db_connection()
+    cursor = connection.cursor()
     # Convert the Python dictionary to a JSON string for storage
     data_json = json.dumps(character_data)
     
@@ -54,27 +54,27 @@ def save_character(character_name, character_data):
     cursor.execute("INSERT OR REPLACE INTO characters (name, data) VALUES (?, ?)",
                    (character_name, data_json))
     
-    conn.commit()
-    conn.close()
+    connection.commit()
+    connection.close()
     print(f"Character '{character_name}' saved successfully.")
 
 def get_character_list():
     """Fetches and returns a list of all saved character names."""
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT name FROM characters ORDER BY name ASC")
+    connection = get_db_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT name FROM characters ORDER BY name DESC")
     # List comprehension to extract the name from each row tuple
     characters = [row['name'] for row in cursor.fetchall()]
-    conn.close()
+    connection.close()
     return characters
 
 def load_character(character_name):
     """Fetches a specific character's data from the database."""
-    conn = get_db_connection()
-    cursor = conn.cursor()
+    connection = get_db_connection()
+    cursor = connection.cursor()
     cursor.execute("SELECT data FROM characters WHERE name = ?", (character_name,))
     row = cursor.fetchone()
-    conn.close()
+    connection.close()
     if row:
         # Parse the JSON string and return it as a Python dictionary
         return json.loads(row['data'])
@@ -82,19 +82,19 @@ def load_character(character_name):
 
 def get_races():
     """Fetches and returns a list of all race names from the database."""
-    conn = get_db_connection()
-    cursor = conn.cursor()
+    connection = get_db_connection()
+    cursor = connection.cursor()
     cursor.execute("SELECT name FROM races ORDER BY name ASC")
     # The result from fetchall is a list of Tuples per Row of Data returned, e.g., [('Dwarf',), ('Elf',)]
     # Use a list comprehension to extract the first item from each tuple.
     races = [row['name'] for row in cursor.fetchall()]
-    conn.close()
+    connection.close()
     return races
 
 class UserPreferences:
     def __init__(self, username):
         self.username = username
-        self.conn = get_db_connection()
+        self.connection = get_db_connection()
         # Load or create the user on initialization
         self.preferences = self._load_or_create_user()
 
@@ -103,7 +103,7 @@ class UserPreferences:
         Loads user preferences from the database. If the user doesn't exist,
         creates a new entry with default preferences.
         """
-        cursor = self.conn.cursor()
+        cursor = self.connection.cursor()
         cursor.execute("SELECT preferences FROM users WHERE username = ?", (self.username,))
         row = cursor.fetchone()
         
@@ -121,5 +121,5 @@ class UserPreferences:
             else: # User does not exist
                  cursor.execute("INSERT INTO users (username, preferences) VALUES (?, ?)",
                                (self.username, prefs_json))
-            self.conn.commit()
+            self.connection.commit()
             return default_prefs
