@@ -33,9 +33,9 @@ class CharacterModel():
             "Charisma": ["Saving Throw", "Deception", "Intimidation", "Performance", "Persuasion"]
         }
 
-        self.scores = {}
+        self.ability_scores = {}
         for ability in self.abilities_list:
-            self.scores[ability] = {
+            self.ability_scores[ability] = {
                 "score": 10,
                 "skills": {
                     skill: {"proficient": False}
@@ -45,17 +45,17 @@ class CharacterModel():
 
         #TODO Default-Load the last-used character
         if character_to_load:
-            self.load(character_to_load)
+            self.load_character(character_to_load)
 
-    def get_modifier_for(self, ability_name):
+    def calc_ability_modifier(self, ability_name):
         """Calculates and returns the modifier string for a given ability."""
         # Ensure ability_name is capitalized correctly
         ability_name = ability_name.capitalize()
-        score = self.scores.get(ability_name, {}).get("score", 10)
+        score = self.ability_scores.get(ability_name, {}).get("score", 10)
         modifier = (score - 10) // 2
         return f"+{modifier}" if modifier >= 0 else str(modifier)
 
-    def get_proficiency_bonus(self):
+    def calc_proficiency_bonus(self):
         """Calculates and returns Proficiency Bonus based on character level."""
         level = self.level
         if (1 <= level) and (level <= 4): # "Long form" syntax
@@ -70,7 +70,7 @@ class CharacterModel():
             return 6
         return 0
     
-    def load(self, character_name):
+    def load_character(self, character_name):
         """Fetches data from DB and populates the model's attributes."""
         data = database.load_character(character_name)
         if not data:
@@ -95,7 +95,7 @@ class CharacterModel():
         
         # Load nested ability data
         if 'abilities' in data:
-            self.scores = data['abilities']
+            self.ability_scores = data['abilities']
         
         return True
     
@@ -116,10 +116,10 @@ class CharacterModel():
             'max_hp': self.max_hp,
             'current_hp': self.current_hp,
             'temp_hp': self.temp_hp,
-            'abilities': self.scores
+            'abilities': self.ability_scores
         }
 
-    def save(self):
+    def save_character(self):
         """Saves the character's data to the database."""
         if not self.charactername or self.charactername == "Character Name":
             print("Save Error: Please enter a character name before saving.")

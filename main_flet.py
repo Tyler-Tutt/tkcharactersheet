@@ -11,16 +11,13 @@ def main(page: ft.Page):
 
     model = CharacterModel()
 
-    # --- Build UI View (created ONCE) ---
-    view = CharacterSheetView(model)
-
-    # --- Controller Logic / Event Handlers ---
-
+    # --- 1. Define Controller Logic / Event Handlers FIRST ---
     def on_header_change(e: ft.ControlEvent):
         """
         A generic handler for all header TextFields.
         Updates the corresponding attribute in the model.
         """
+        
         attr_name = e.control.data  # e.g., "charactername", "level", "race"
         new_value = e.control.value
 
@@ -45,15 +42,15 @@ def main(page: ft.Page):
         ability_name = e.control.data
         try:
             new_score = int(e.control.value)
-            model.scores[ability_name]["score"] = new_score
+            model.ability_scores[ability_name]["score"] = new_score
         except (ValueError, TypeError):
             new_score = 10 # Default
-            model.scores[ability_name]["score"] = new_score
+            model.ability_scores[ability_name]["score"] = new_score
             e.control.value = str(new_score) # Fix the UI
 
         # Update the UI
-        new_modifier = model.get_modifier_for(ability_name)
-        for card in view.ability_cards:
+        new_modifier = model.calc_ability_modifier(ability_name)
+        for card in view.ability_score_containers:
             # Access the ability name Text-control directly from data
             card_ability_name_text = card.data["ability_name_text"]
             card_ability_name = card_ability_name_text.value
@@ -65,9 +62,13 @@ def main(page: ft.Page):
                 break
         page.update()
 
+    # --- 2. Build UI View SECOND (pass handlers as arguments) ---
+    view = CharacterSheetView(model, on_score_change, on_header_change)
+
+    # --- 3. Other Application Logic ---
     def save_character(e):
         """Saves the current character data."""
-        if model.save():
+        if model.save_character():
             page.open(
                 ft.SnackBar(
                     ft.Text(f"Saved {model.charactername}!"), 
@@ -98,12 +99,12 @@ def main(page: ft.Page):
         view_controls.experience_points_field.value = str(model_data.experience_points)
 
         # 2. Update Ability Scores and Modifiers
-        for card in view_controls.ability_cards:
+        for card in view_controls.ability_score_containers:
             ability_name_text = card.data["ability_name_text"].value.capitalize()
-            if ability_name_text in model_data.scores:
+            if ability_name_text in model_data.ability_scores:
                 # Get data from the (now loaded) model
-                ability_data = model_data.scores[ability_name_text]
-                modifier_str = model_data.get_modifier_for(ability_name_text)
+                ability_data = model_data.ability_scores[ability_name_text]
+                modifier_str = model_data.calc_ability_modifier(ability_name_text)
 
                 # Get the view controls from the card's data dict
                 score_field = card.data["score_field"]
@@ -126,7 +127,7 @@ def main(page: ft.Page):
             char_to_load = character_dropdown.value
             if char_to_load:
                 # 1. Load data into the existing model
-                if model.load(char_to_load):
+                if model.load_character(char_to_load):
                     
                     # 2. Update the existing view from the model
                     update_view_from_model(model, view)
@@ -140,7 +141,6 @@ def main(page: ft.Page):
                     page.open(ft.SnackBar(ft.Text(f"Failed to load {char_to_load}.")))
             else:
                 page.close(dialog)
-
 
         character_dropdown = ft.Dropdown(
             options=[ft.dropdown.Option(name) for name in character_list],
@@ -167,22 +167,7 @@ def main(page: ft.Page):
         # Modern Flet: Open the dialog directly (handles updates and overlays automatically)
         page.open(dialog)
 
-    def connect_event_handlers(view_instance: CharacterSheetView):
-        """Connects event handlers to the controls in the view."""
-        # 1. Connect Ability Score handlers
-        for card in view_instance.ability_cards:
-            score_field = card.data["score_field"]
-            score_field.on_change = on_score_change
-
-        # 2. Connect Header handlers
-        view_instance.charactername_field.on_change = on_header_change
-        view_instance.class_field.on_change = on_header_change
-        view_instance.level_field.on_change = on_header_change
-        view_instance.background_field.on_change = on_header_change
-        view_instance.player_name_field.on_change = on_header_change
-        view_instance.race_field.on_change = on_header_change
-        view_instance.alignment_field.on_change = on_header_change
-        view_instance.experience_points_field.on_change = on_header_change
+    # Note: connect_event_handlers() has been entirely deleted!
 
     # --- 4. Page Setup and Final Layout ---
     page.appbar = ft.AppBar(
@@ -193,9 +178,9 @@ def main(page: ft.Page):
         ]
     )
 
-    # Add the view to the page and connect handlers (all done once at start)
+    # Add the view to the page. 
+    # Because you will bind the events inside the View class, Flet handles them immediately.
     page.add(view)
-    connect_event_handlers(view)
     page.update()
 
 if __name__ == "__main__":

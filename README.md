@@ -24,6 +24,8 @@
 ## Change python Interpreter
     Ctrl + Shift + P → select virtual environment interpreter
     Ctrl + Shift + P → Reload Window if necessary
+## To run the UI
+flet run .\main_fley.py
 
 # Dev Environment Routine:
 ## Bash Activate Linux Virutal Environment:

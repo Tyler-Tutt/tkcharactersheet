@@ -4,34 +4,40 @@ from models.character_model import CharacterModel
 #TODO Layout Ability Score, AC/HP/Speed, and Features Column
 
 class CharacterSheetView(ft.Container):
-    def __init__(self, model: CharacterModel):
+    # 1. Update __init__ to accept the handler functions
+    def __init__(self, model: CharacterModel, on_score_change_handler, on_header_change_handler):
         super().__init__(expand=True)
         self.model = model
-        # --- Store references to controls that need to be updated ---
-        # Header Fields
-        self.charactername_field = ft.TextField(label="Character Name", value=self.model.charactername, data="charactername")
-        self.class_field = ft.TextField(label="Class", value=self.model.characterclass, data="characterclass")
-        self.level_field = ft.TextField(label="Level", value=str(self.model.level), data="level")
-        self.background_field = ft.TextField(label="Background", value=self.model.background, data="background")
-        self.player_name_field = ft.TextField(label="Player Name", value=self.model.player_name, data="player_name")
-        self.race_field = ft.TextField(label="Race", value=self.model.race, data="race")
-        self.alignment_field = ft.TextField(label="Alignment", value=self.model.alignment, data="alignment")
-        self.experience_points_field = ft.TextField(label="Experience Points", value=str(self.model.experience_points), data="experience_points")
+        
+        # Save the handlers to the class instance so other methods can use them
+        self.on_score_change = on_score_change_handler
+        self.on_header_change = on_header_change_handler
 
-        # Ability Cards (will be populated in _create_ability_cards)
-        self.ability_cards = []
+        # --- Store references to controls that need to be updated ---
+        # 2. Bind the header handler immediately by passing on_change=self.on_header_change
+        self.charactername_field = ft.TextField(label="Character Name", value=self.model.charactername, data="charactername", on_change=self.on_header_change)
+        self.class_field = ft.TextField(label="Class", value=self.model.characterclass, data="characterclass", on_change=self.on_header_change)
+        self.level_field = ft.TextField(label="Level", value=str(self.model.level), data="level", on_change=self.on_header_change)
+        self.background_field = ft.TextField(label="Background", value=self.model.background, data="background", on_change=self.on_header_change)
+        self.player_name_field = ft.TextField(label="Player Name", value=self.model.player_name, data="player_name", on_change=self.on_header_change)
+        self.race_field = ft.TextField(label="Race", value=self.model.race, data="race", on_change=self.on_header_change)
+        self.alignment_field = ft.TextField(label="Alignment", value=self.model.alignment, data="alignment", on_change=self.on_header_change)
+        self.experience_points_field = ft.TextField(label="Experience Points", value=str(self.model.experience_points), data="experience_points", on_change=self.on_header_change)
+
+        # Ability Containers (will be populated in _create_ability_score_containers)
+        self.ability_score_containers = []
         
         # Build the UI
         self.content = self.build()
 
     def build(self):
-        self.header = self._create_character_header()
-        self.ability_score_frame = self._create_second_row_page_frame()
+        self.header = self._create_header()
+        self.second_row_container = self._create_second_row_container()
         return ft.Column(
             controls=[
                 self.header,
                 ft.Divider(height=20),
-                self.ability_score_frame,
+                self.second_row_container,
                 ft.Row(
                     # wrap=True,
                     # spacing=10,
@@ -41,11 +47,12 @@ class CharacterSheetView(ft.Container):
             ]
         )
 
-    def _create_character_header(self):
+    def _create_header(self):
         """Builds and returns the top header UI as an ft.Container."""
         # --- We already defined the fields in __init__, so we just use them here ---
         return ft.Container(
             padding=10,
+            bgcolor=ft.Colors.RED_200,
             border=ft.border.all(2, ft.Colors.OUTLINE),
             border_radius=8,
             content=ft.Row(
@@ -96,10 +103,10 @@ class CharacterSheetView(ft.Container):
             )
         )
 
-    def _create_second_row_page_frame(self):
+    def _create_second_row_container(self):
         "Builds and returns a container with a row which has 3 Columns"
         # --- Populate the self.ability_cards list ---
-        self.ability_cards = self._create_ability_cards()
+        self.ability_score_containers = self._create_ability_score_containers()
         return ft.Container(
             bgcolor=ft.Colors.LIGHT_BLUE,
             border=ft.border.all(2),
@@ -107,6 +114,7 @@ class CharacterSheetView(ft.Container):
             content=ft.Row(
                 alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                 controls=[
+
                     # --- Ability Score Column ---
                     ft.Container(
                         expand=1,
@@ -114,27 +122,29 @@ class CharacterSheetView(ft.Container):
                         bgcolor=ft.Colors.GREY,
                         content=ft.Column(
                             controls=[
-                                *self.ability_cards  # Unpack the list of cards
+                                *self.ability_score_containers  # Unpack the list of containers
                             ]
                         )
                     ),
+
                     # --- AC/HP/Speed Column ---
                     ft.Container(
                         expand=1,
-                        bgcolor=ft.Colors.AMBER,
+                        bgcolor=ft.Colors.LIGHT_BLUE_ACCENT_200,
                         content=ft.Column(
                             controls=[
-                                ft.Text("Hello")
+                                ft.Text("AC/HP/Speed")
                             ]
                         )
                     ),
+
                     # --- Features & Traits Column ---
                     ft.Container(
                         expand=1,
                         bgcolor=ft.Colors.GREY,
                         content=ft.Column(
                             controls=[
-                                ft.Text("Hello")
+                                ft.Text("Features & Traits")
                             ]
                         )
                     )
@@ -142,36 +152,36 @@ class CharacterSheetView(ft.Container):
             )
         )
 
-    def _create_ability_cards(self):
-        """Creates the UI for all ability scores using a Loop of the abilities_list."""
+    def _create_ability_score_containers(self):
+        """Builds the UI (containers) for each ability score using a Loop of the abilities_list."""
         cards = []
         for ability_name in self.model.abilities_list:
-            card = self._create_ability_score_card(ability_name)
+            card = self._create_ability_score_container(ability_name)
             cards.append(card)
         return cards
 
-    def _create_ability_score_card(self, ability_name: str):
-        """Builds the UI for a single ability score."""
-        ability_data = self.model.scores[ability_name]
+    def _create_ability_score_container(self, ability_name: str):
+        """Builds a singular UI (Container) for a single ability score."""
+        ability_score = self.model.ability_scores[ability_name]
         skills_map = self.model.skills_map[ability_name]
 
         # --- Creating NAMED Textfields so as to be retreivable data ---
+        ability_name_text = ft.Text(ability_name.upper(), size=16, weight=ft.FontWeight.BOLD)
+        modifier_text = ft.Text(self.model.calc_ability_modifier(ability_name), size=20)
         score_field = ft.TextField(
-            value=str(ability_data["score"]),
+            value=str(ability_score["score"]),
             text_align=ft.TextAlign.CENTER,
             width=100,
-            data=ability_name  # The controller will use this
+            data=ability_name,  # The controller will use this
+            on_change=self.on_score_change  # 3. Bind the score handler right here!
         )
-
-        modifier_text = ft.Text(self.model.get_modifier_for(ability_name), size=20)
-        ability_name_text = ft.Text(ability_name.upper(), size=16, weight=ft.FontWeight.BOLD)
 
         skills_controls = []
         for skill in skills_map:
             skills_controls.append(
                 ft.Row(
                     controls=[
-                        ft.Checkbox(value=ability_data["skills"][skill]["proficient"]),
+                        ft.Checkbox(value=ability_score["skills"][skill]["proficient"]),
                         ft.TextField(width=50),
                         ft.Text(skill, selectable=True)
                     ]
@@ -192,8 +202,8 @@ class CharacterSheetView(ft.Container):
                         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                         controls=[
                             ability_name_text,
-                            score_field,
                             modifier_text,
+                            score_field,
                             # ft.Divider(),
                         ]
                     ),
@@ -206,8 +216,8 @@ class CharacterSheetView(ft.Container):
             ),
             # Store references to controls that need to be updated by the controller
             data={
-                "score_field": score_field,
+                "ability_name_text": ability_name_text,
                 "modifier_text": modifier_text,
-                "ability_name_text": ability_name_text
+                "score_field": score_field
             }
         )
