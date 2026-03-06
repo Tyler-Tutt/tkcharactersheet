@@ -40,6 +40,8 @@ def main(page: ft.Page):
     def on_score_change(e: ft.ControlEvent):
         """Handles changes to any ability score TextField."""
         ability_name = e.control.data
+        print(f"--ability_name: {ability_name}--")
+        
         try:
             new_score = int(e.control.value)
             model.ability_scores[ability_name]["score"] = new_score
@@ -50,14 +52,16 @@ def main(page: ft.Page):
 
         # Update the UI
         new_modifier = model.calc_ability_modifier(ability_name)
-        for card in view.ability_score_containers:
+        for ability_container in view.ability_score_containers:
             # Access the ability name Text-control directly from data
-            card_ability_name_text = card.data["ability_name_text"]
+            card_ability_name_text = ability_container.data["ability_name_text"]
+            print(f"-card_ability_name_text: {card_ability_name_text}-")
             card_ability_name = card_ability_name_text.value
+            print(f"--card_ability_name: {card_ability_name}--")
 
             if card_ability_name.lower() == ability_name.lower():
                 # Access the modifier Text-control directly from data
-                modifier_text_control = card.data["modifier_text"]
+                modifier_text_control = ability_container.data["modifier_text"]
                 modifier_text_control.value = new_modifier
                 break
         page.update()
