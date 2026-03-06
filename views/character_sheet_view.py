@@ -28,9 +28,9 @@ class CharacterSheetView(ft.Container):
         self.ability_score_containers = []
         
         # Build the UI
-        self.content = self.build()
+        self.content = self.build_ui()
 
-    def build(self):
+    def build_ui(self):
         self.header = self._create_header()
         self.second_row_container = self._create_second_row_container()
         return ft.Column(
@@ -189,8 +189,7 @@ class CharacterSheetView(ft.Container):
             )
 
         # --- Individual Ability Score Containers --- 
-        return ft.Container(
-            # width=250,
+        card = ft.Container(
             padding=10,
             bgcolor=ft.Colors.LIGHT_GREEN,
             border=ft.border.all(2, ft.Colors.OUTLINE),
@@ -204,7 +203,6 @@ class CharacterSheetView(ft.Container):
                             ability_name_text,
                             modifier_text,
                             score_field,
-                            # ft.Divider(),
                         ]
                     ),
                     ft.Column(
@@ -213,11 +211,14 @@ class CharacterSheetView(ft.Container):
                         ]
                     )
                 ]
-            ),
-            # Store references to controls that need to be updated by the controller
-            data={
-                "ability_name_text": ability_name_text,
-                "modifier_text": modifier_text,
-                "score_field": score_field
-            }
+            )
+            # Notice we completely removed the data={} dictionary here!
         )
+        
+        # --- THE FIX ---
+        # Attach references safely as standard Python attributes 
+        card.ability_name_text_ref = ability_name_text
+        card.modifier_text_ref = modifier_text
+        card.score_field_ref = score_field
+        
+        return card

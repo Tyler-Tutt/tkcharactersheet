@@ -40,30 +40,43 @@ def main(page: ft.Page):
     def on_score_change(e: ft.ControlEvent):
         """Handles changes to any ability score TextField."""
         ability_name = e.control.data
-        print(f"--ability_name: {ability_name}--")
+        print(f"{ability_name}")
+        raw_value = e.control.value
+        print(f"{raw_value}")
         
-        try:
-            new_score = int(e.control.value)
-            model.ability_scores[ability_name]["score"] = new_score
-        except (ValueError, TypeError):
-            new_score = 10 # Default
-            model.ability_scores[ability_name]["score"] = new_score
-            e.control.value = str(new_score) # Fix the UI
+        # --- THE FIX ---
+        # If the box is empty, don't crash! Just treat it as 0 temporarily.
+        if raw_value == "":
+            new_score = 0
+        else:
+            try:
+                new_score = int(raw_value)
+            except (ValueError, TypeError):
+                new_score = 10 # Default on actual invalid input (like letters)
+                e.control.value = str(new_score) # Fix the UI
+
+        # Update the Model
+        model.ability_scores[ability_name]["score"] = new_score
+
+        # Calculate the new modifier
+        new_modifier = model.calc_ability_modifier(ability_name)
+        print(f"{new_modifier}")
 
         # Update the UI
         new_modifier = model.calc_ability_modifier(ability_name)
+        
         for ability_container in view.ability_score_containers:
-            # Access the ability name Text-control directly from data
-            card_ability_name_text = ability_container.data["ability_name_text"]
-            print(f"-card_ability_name_text: {card_ability_name_text}-")
-            card_ability_name = card_ability_name_text.value
-            print(f"--card_ability_name: {card_ability_name}--")
+            # Use our safe custom attribute!
+            card_ability_name = ability_container.ability_name_text_ref.value
 
             if card_ability_name.lower() == ability_name.lower():
-                # Access the modifier Text-control directly from data
-                modifier_text_control = ability_container.data["modifier_text"]
+                # Use our safe custom attribute!
+                modifier_text_control = ability_container.modifier_text_ref
                 modifier_text_control.value = new_modifier
+                
+                # We can safely add this back now. It will update instantly!
                 break
+                
         page.update()
 
     # --- 2. Build UI View SECOND (pass handlers as arguments) ---
@@ -104,17 +117,16 @@ def main(page: ft.Page):
 
         # 2. Update Ability Scores and Modifiers
         for card in view_controls.ability_score_containers:
-            ability_name_text = card.data["ability_name_text"].value.capitalize()
+            ability_name_text = card.ability_name_text_ref.value.capitalize()
+            
             if ability_name_text in model_data.ability_scores:
-                # Get data from the (now loaded) model
                 ability_data = model_data.ability_scores[ability_name_text]
                 modifier_str = model_data.calc_ability_modifier(ability_name_text)
 
-                # Get the view controls from the card's data dict
-                score_field = card.data["score_field"]
-                modifier_text = card.data["modifier_text"]
+                # Use our safe custom attributes!
+                score_field = card.score_field_ref
+                modifier_text = card.modifier_text_ref
 
-                # Set the view control values
                 score_field.value = str(ability_data["score"])
                 modifier_text.value = modifier_str
         
