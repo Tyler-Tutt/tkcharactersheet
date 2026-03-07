@@ -1,6 +1,7 @@
 import flet as ft
 from models.character_model import CharacterModel
 from views.character_sheet_view import CharacterSheetView
+from views.load_character_dialog import LoadCharacterDialog
 import database
 
 def main(page: ft.Page):
@@ -94,54 +95,30 @@ def main(page: ft.Page):
 
 
     def open_load_dialog(e):
-        """Opens a dialog to load a character."""
+        """Opens a ft.Alertdialog to load a character from the database."""
+        # 1. Get the data
         character_list = database.get_character_list()
 
-        def load_and_close(e):
-            char_to_load = character_dropdown.value
-            if char_to_load:
-                # 1. Load data into the existing model
-                if model.load_character(char_to_load):
-                    
-                    # 2. Update the existing view from the model
-                    update_view_from_model(model, view)
-                    
-                    # Modern Flet: Close the dialog
-                    page.close(dialog) 
-                    
-                    # Modern Flet: Open the SnackBar
-                    page.open(ft.SnackBar(ft.Text(f"Loaded {char_to_load}!"))) 
-                else:
-                    page.open(ft.SnackBar(ft.Text(f"Failed to load {char_to_load}.")))
+        # 2. Define what happens when the user clicks "Load"
+        def handle_load(char_to_load):
+            if model.load_character(char_to_load):
+                update_view_from_model(model, view)
+                page.close(dialog) 
+                page.open(ft.SnackBar(ft.Text(f"Loaded {char_to_load}!"))) 
             else:
-                page.close(dialog)
+                page.open(ft.SnackBar(ft.Text(f"Failed to load {char_to_load}.")))
 
-        character_dropdown = ft.Dropdown(
-            options=[ft.dropdown.Option(name) for name in character_list],
-            value=character_list[0] if character_list else None,
-            expand=True
-        )
+        # 3. Define what happens when the user clicks "Cancel"
+        def handle_cancel():
+            page.close(dialog)
 
-        # Define the dialog as a local variable rather than assigning to page.dialog
-        dialog = ft.AlertDialog(
-            modal=True,
-            title=ft.Text("Load Character"),
-            content=ft.Container(
-                content=character_dropdown,
-                width=300
-            ),
-            actions=[
-                ft.TextButton("Load", on_click=load_and_close),
-                # Use page.close() for the cancel button as well
-                ft.TextButton("Cancel", on_click=lambda e: page.close(dialog)),
-            ],
-            actions_alignment=ft.MainAxisAlignment.END,
+        # 4. Instantiate and open our custom dialog component
+        dialog = LoadCharacterDialog(
+            character_list=character_list,
+            on_load_confirm=handle_load,
+            on_cancel=handle_cancel
         )
-        
-        # Modern Flet: Open the dialog directly (handles updates and overlays automatically)
         page.open(dialog)
-
-    # Note: connect_event_handlers() has been entirely deleted!
 
     # --- 4. Page Setup and Final Layout ---
     page.appbar = ft.AppBar(
