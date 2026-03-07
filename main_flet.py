@@ -17,7 +17,6 @@ def main(page: ft.Page):
         A generic handler for all header TextFields.
         Updates the corresponding attribute in the model.
         """
-        
         attr_name = e.control.data  # e.g., "charactername", "level", "race"
         new_value = e.control.value
 
@@ -38,7 +37,7 @@ def main(page: ft.Page):
         # No page.update() needed, as the TextField already shows the new value.
 
     def on_score_change(ability_name: str, new_score: int):
-        """Handles updates coming from the AbilityScoreContainer components."""
+        """Handles updates coming from AbilityScoreContainer components."""
         # Update the Model
         model.ability_scores[ability_name]["score"] = new_score
         print(f"Model Updated: {ability_name} is now {new_score}")
@@ -73,14 +72,7 @@ def main(page: ft.Page):
         This is the core of the state management for loading.
         """
         # 1. Update Header Fields
-        view_controls.charactername_field.value = model_data.charactername
-        view_controls.class_field.value = model_data.characterclass
-        view_controls.level_field.value = str(model_data.level)
-        view_controls.background_field.value = model_data.background
-        view_controls.player_name_field.value = model_data.player_name
-        view_controls.race_field.value = model_data.race
-        view_controls.alignment_field.value = model_data.alignment
-        view_controls.experience_points_field.value = str(model_data.experience_points)
+        view_controls.header.update_header_data(model_data)
 
         # 2. Update Ability Scores and Modifiers
         for card in view_controls.ability_score_containers:
