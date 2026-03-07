@@ -1,5 +1,6 @@
 import flet as ft
 from models.character_model import CharacterModel
+from views.ability_score_container import AbilityScoreContainer
 
 #TODO Layout Ability Score, AC/HP/Speed, and Features Column
 
@@ -31,7 +32,7 @@ class CharacterSheetView(ft.Container):
         self.content = self.build_ui()
 
     def build_ui(self):
-        self.header = self._create_header()
+        self.header = self._create_header_container()
         self.second_row_container = self._create_second_row_container()
         return ft.Column(
             controls=[
@@ -47,8 +48,8 @@ class CharacterSheetView(ft.Container):
             ]
         )
 
-    def _create_header(self):
-        """Builds and returns the top header UI as an ft.Container."""
+    def _create_header_container(self):
+        """Builds and returns the top header Container"""
         # --- We already defined the fields in __init__, so we just use them here ---
         return ft.Container(
             padding=10,
@@ -153,72 +154,17 @@ class CharacterSheetView(ft.Container):
         )
 
     def _create_ability_score_containers(self):
-        """Builds the UI (containers) for each ability score using a Loop of the abilities_list."""
+        """Builds the ft.Container for each ability score using the AbilityScoreContainer component."""
         cards = []
         for ability_name in self.model.abilities_list:
-            card = self._create_ability_score_container(ability_name)
+            ability_data = self.model.ability_scores[ability_name]
+            
+            # Instantiate our clean new custom component
+            card = AbilityScoreContainer(
+                ability_name=ability_name,
+                initial_score=ability_data["score"],
+                skills_data=ability_data["skills"],
+                on_score_change=self.on_score_change # Pass the controller's function down
+            )
             cards.append(card)
         return cards
-
-    def _create_ability_score_container(self, ability_name: str):
-        """Builds a singular UI (Container) for a single ability score."""
-        ability_score = self.model.ability_scores[ability_name]
-        skills_map = self.model.skills_map[ability_name]
-
-        # --- Creating NAMED Textfields so as to be retreivable data ---
-        ability_name_text = ft.Text(ability_name.upper(), size=16, weight=ft.FontWeight.BOLD)
-        modifier_text = ft.Text(self.model.calc_ability_modifier(ability_name), size=20)
-        score_field = ft.TextField(
-            value=str(ability_score["score"]),
-            text_align=ft.TextAlign.CENTER,
-            width=100,
-            data=ability_name,  # The controller will use this
-            on_change=self.on_score_change  # 3. Bind the score handler right here!
-        )
-
-        skills_controls = []
-        for skill in skills_map:
-            skills_controls.append(
-                ft.Row(
-                    controls=[
-                        ft.Checkbox(value=ability_score["skills"][skill]["proficient"]),
-                        ft.TextField(width=50),
-                        ft.Text(skill, selectable=True)
-                    ]
-                )
-            )
-
-        # --- Individual Ability Score Containers --- 
-        card = ft.Container(
-            padding=10,
-            bgcolor=ft.Colors.LIGHT_GREEN,
-            border=ft.border.all(2, ft.Colors.OUTLINE),
-            border_radius=8,
-            content=ft.Row(
-                vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                controls=[
-                    ft.Column(
-                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                        controls=[
-                            ability_name_text,
-                            modifier_text,
-                            score_field,
-                        ]
-                    ),
-                    ft.Column(
-                        controls=[
-                            *skills_controls
-                        ]
-                    )
-                ]
-            )
-            # Notice we completely removed the data={} dictionary here!
-        )
-        
-        # --- THE FIX ---
-        # Attach references safely as standard Python attributes 
-        card.ability_name_text_ref = ability_name_text
-        card.modifier_text_ref = modifier_text
-        card.score_field_ref = score_field
-        
-        return card

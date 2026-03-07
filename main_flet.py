@@ -37,47 +37,14 @@ def main(page: ft.Page):
         setattr(model, attr_name, new_value)
         # No page.update() needed, as the TextField already shows the new value.
 
-    def on_score_change(e: ft.ControlEvent):
-        """Handles changes to any ability score TextField."""
-        ability_name = e.control.data
-        print(f"{ability_name}")
-        raw_value = e.control.value
-        print(f"{raw_value}")
-        
-        # --- THE FIX ---
-        # If the box is empty, don't crash! Just treat it as 0 temporarily.
-        if raw_value == "":
-            new_score = 0
-        else:
-            try:
-                new_score = int(raw_value)
-            except (ValueError, TypeError):
-                new_score = 10 # Default on actual invalid input (like letters)
-                e.control.value = str(new_score) # Fix the UI
-
+    def on_score_change(ability_name: str, new_score: int):
+        """Handles updates coming from the AbilityScoreContainer components."""
         # Update the Model
         model.ability_scores[ability_name]["score"] = new_score
-
-        # Calculate the new modifier
-        new_modifier = model.calc_ability_modifier(ability_name)
-        print(f"{new_modifier}")
-
-        # Update the UI
-        new_modifier = model.calc_ability_modifier(ability_name)
+        print(f"Model Updated: {ability_name} is now {new_score}")
         
-        for ability_container in view.ability_score_containers:
-            # Use our safe custom attribute!
-            card_ability_name = ability_container.ability_name_text_ref.value
-
-            if card_ability_name.lower() == ability_name.lower():
-                # Use our safe custom attribute!
-                modifier_text_control = ability_container.modifier_text_ref
-                modifier_text_control.value = new_modifier
-                
-                # We can safely add this back now. It will update instantly!
-                break
-                
-        page.update()
+        # Notice we DO NOT need page.update() or UI manipulation here!
+        # The component already updated its own visual state.
 
     # --- 2. Build UI View SECOND (pass handlers as arguments) ---
     view = CharacterSheetView(model, on_score_change, on_header_change)
@@ -117,18 +84,17 @@ def main(page: ft.Page):
 
         # 2. Update Ability Scores and Modifiers
         for card in view_controls.ability_score_containers:
-            ability_name_text = card.ability_name_text_ref.value.capitalize()
+            # We can safely read the component's ability_name attribute
+            ability_name = card.ability_name 
             
-            if ability_name_text in model_data.ability_scores:
-                ability_data = model_data.ability_scores[ability_name_text]
-                modifier_str = model_data.calc_ability_modifier(ability_name_text)
-
-                # Use our safe custom attributes!
-                score_field = card.score_field_ref
-                modifier_text = card.modifier_text_ref
-
-                score_field.value = str(ability_data["score"])
-                modifier_text.value = modifier_str
+            if ability_name in model_data.ability_scores:
+                ability_data = model_data.ability_scores[ability_name]
+                
+                # Use the component's built-in update method!
+                card.update_card_data(
+                    new_score=ability_data["score"],
+                    new_skills_data=ability_data["skills"]
+                )
         
         # 3. TODO: Update other UI elements as you add them
         # (e.g., skill proficiencies, HP, etc.)

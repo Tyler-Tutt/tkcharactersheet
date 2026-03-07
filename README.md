@@ -38,6 +38,6 @@ flet run .\main_fley.py
 # TODO 
 - Add a License
 
-# Feature List
+## Feature List
 - Scrolling Text Area that records the last actions (took 5 damage, used spell, etc.)
 - Health and Mana (Spell Slot) Bars connected to HP-Text
