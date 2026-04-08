@@ -134,7 +134,7 @@ class CharacterSheetController:
 
     def _handle_toggle_attunement(self, message: dict):
         item_index = message["index"]
-        self.model.inventory[item_index].is_equipped = message["is_equipped"]
+        self.model.inventory[item_index].is_active = message["is_active"]
         self.model.update_active_modifiers()
 
     # --- External Save/Load ---

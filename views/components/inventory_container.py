@@ -48,7 +48,7 @@ class InventoryContainer(ft.Container):
         e.page.pubsub.send_all_on_topic(PubSubTopic.UI_ACTION, {
             "action": UIAction.TOGGLE_ATTUNEMENT,
             "index": e.control.data,
-            "is_equipped": e.control.value
+            "is_active": e.control.value
         })
 
     # --- Data Updaters ---
@@ -63,7 +63,7 @@ class InventoryContainer(ft.Container):
                     ft.Text(item.short_description, color=ft.Colors.GREY_400, size=12, expand=True),
                     ft.Checkbox(
                         label="Attuned", 
-                        value=item.is_equipped, 
+                        value=item.is_active, 
                         data=index,
                         on_change=self._on_attunement_change
                     )

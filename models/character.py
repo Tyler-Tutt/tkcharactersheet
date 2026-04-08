@@ -51,7 +51,7 @@ class CharacterModel:
         # Pulls modifiers from Inventory Items
         self.active_modifiers.extend([
             mod for item in self.inventory 
-            if item.is_equipped for mod in item.modifiers
+            if item.is_active for mod in item.modifiers
         ])
         
         # Future additions go here!
