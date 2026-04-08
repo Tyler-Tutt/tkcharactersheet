@@ -4,7 +4,7 @@ from .effectmodifiers import EffectModifier
 
 @dataclass(kw_only=True)
 class StatAffectingEntity:
-    """Base class for anything that can modify a character's stats."""
+    """Base class for anything that can modify a character's stats: Items, Feats, Spells, etc."""
     name: str
     description: str = ""
     short_description: str = ""

@@ -26,7 +26,7 @@ class CharacterModel:
     # --- Modifier List ---
     active_modifiers: List[EffectModifier] = field(default_factory=list)
     
-    # --- Inventory ---
+    # --- Inventory List ---
     inventory: List[InventoryItem] = field(default_factory=list)
 
     # --- Ability & Skill Data ---
