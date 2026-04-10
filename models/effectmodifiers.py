@@ -4,7 +4,10 @@ from .enums import StatType, ArithmeticType
 
 @dataclass
 class EffectModifier:
-    """Standardized Class for Effects from different sources to modify character stats."""
+    """
+    Standardized Class for Effects from different sources to modify character stats.
+    'base_entity' is *what* is modifying something. EffectModifier is *how* it is modifying something.
+    """
     source_name: str
     target: StatType
     arithmetic_type: ArithmeticType

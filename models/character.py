@@ -64,17 +64,23 @@ class CharacterModel:
         Order of Operations: Base -> Override -> Bonus -> Multiplier
         """
         # 1. Filter for the target_stat
-        relevant_mods = [mod for mod in self.active_modifiers if mod.target == target_stat]
+        relevant_mods = [effectmodifier for effectmodifier in self.active_modifiers if effectmodifier.target == target_stat]
         final_value = float(base_value)
+
         # 2. Process Overrides (e.g., Setting a stat to a specific number)
-        overrides = [mod.value for mod in relevant_mods if mod.arithmetic_type == ArithmeticType.OVERRIDE]
+        overrides = [effectmodifier.value for effectmodifier in relevant_mods if effectmodifier.arithmetic_type == ArithmeticType.OVERRIDE]
         if overrides:
-            final_value = max(overrides) # Standard D&D rule: take the highest override
+            highest_override = max(overrides)
+            # D&D 5e Rule: Stat-setting (override) items only apply if they increase the score.
+            # Take the max of the character's base value AND the highest item override.
+            final_value = max(final_value, highest_override)
+        
         # 3. Process Bonuses (Additive/Subtractive)
-        bonuses = [mod.value for mod in relevant_mods if mod.arithmetic_type == ArithmeticType.BONUS]
+        bonuses = [effectmodifier.value for effectmodifier in relevant_mods if effectmodifier.arithmetic_type == ArithmeticType.BONUS]
         final_value += sum(bonuses)
+        
         # 4. Process Multipliers (e.g., double speed)
-        multipliers = [mod.value for mod in relevant_mods if mod.arithmetic_type == ArithmeticType.MULTIPLIER]
+        multipliers = [effectmodifier.value for effectmodifier in relevant_mods if effectmodifier.arithmetic_type == ArithmeticType.MULTIPLIER]
         for mult in multipliers:
             final_value *= mult
 
