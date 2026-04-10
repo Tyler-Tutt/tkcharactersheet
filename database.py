@@ -8,13 +8,12 @@ def get_db_connection():
     """Establishes and returns a connection to the SQLite database. i.e. Creates a database Connection object"""
     conn = sqlite3.connect(DATABASE_FILE)
     conn.row_factory = sqlite3.Row # Allows access to columns by name 
-    
     conn.execute("PRAGMA journal_mode = WAL;")
     return conn
 
 def init_db():
     """
-    Initializes the database and creates the necessary tables if they do not already exist.
+    Initializes the database schema (Strictly DDL (CREATE TABLES)) if they do not already exist.
     """
     # closing() guarantees connection.close() is called when the block ends
     with closing(get_db_connection()) as connection:
@@ -49,24 +48,6 @@ def init_db():
                 data TEXT NOT NULL
             )
         ''')
-
-        #TODO Find a way to easily manipulate data (Items, Spells, feats, etc.) in a spreadsheet, 
-        #TODO but quickly export/generate JSON so that it can be put into the 1-time-db-initialization-script
-        # 2. Extract the static metadata out of the JSON blob
-        cloak_data = {
-            "description": "You gain a +1 bonus to AC and saving throws while you wear this cloak.",
-            "short_description": "+1 AC | +1 to all Saving Throws",
-            "modifiers": [
-                {"target": "ac", "arithmetic_type": "bonus", "value": 1, "source_name": "Cloak of Protection"},
-                {"target": "saving_throws", "arithmetic_type": "bonus", "value": 1, "source_name": "Cloak of Protection"}
-            ]
-        }
-
-        # 3. Insert using the new schema columns
-        cursor.execute("""
-            INSERT OR REPLACE INTO items (name, category, rarity, requires_attunement, data) 
-            VALUES (?, ?, ?, ?, ?)
-        """, ("Cloak of Protection", "Wondrous Item", "Uncommon", True, json.dumps(cloak_data)))
         
         connection.commit()
 

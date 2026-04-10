@@ -8,7 +8,8 @@
 
 # File Structure:
 - Project folder on Windows file system
-- Windows for testing & file storage
+- Use Windows for testing & file storage
+- Use WSL (Linux) for git commands
 
 # Initial Dev Environment Setup:
 ## Create Windows Virtual Environment:
@@ -21,7 +22,7 @@
 ## If using WSL
 ### Create Linux Virtual Environment:
     python3 -m venv .venv
-## To run the UI
+## To run the UI (Powershell)
 flet run .\main_fley.py
 
 # Dev Environment Routine:
@@ -31,6 +32,8 @@ flet run .\main_fley.py
     .\.venv_win\Scripts\activate
 ## When installing a new library
     pip freeze > requirements.txt
+## Seed Database
+    python -m scripts.seed_db
 
 # Resources
 - https://github.com/BTMorton/dnd-5e-srd

@@ -14,7 +14,7 @@ class InventoryContainer(ft.Container):
         self.item_list_column = ft.Column()
         
         self.add_test_item_btn = ft.ElevatedButton(
-            text="Loot 'Cloak of Protection'", 
+            text="Loot 'Item from _add_test_item'", 
             on_click=self._add_test_item
         )
 
@@ -42,7 +42,7 @@ class InventoryContainer(ft.Container):
 
     # --- Action Publishers ---
     def _add_test_item(self, e):
-        e.page.pubsub.send_all_on_topic(PubSubTopic.UI_ACTION, {"action": "add_item", "item_name": "Cloak of Protection"})
+        e.page.pubsub.send_all_on_topic(PubSubTopic.UI_ACTION, {"action": "add_item", "item_name": "Amulet of Health"})
 
     def _on_attunement_change(self, e):
         e.page.pubsub.send_all_on_topic(PubSubTopic.UI_ACTION, {

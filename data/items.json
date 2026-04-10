@@ -5,7 +5,7 @@
     "rarity": "Uncommon",
     "requires_attunement": true,
     "description": "You gain a +1 bonus to AC and saving throws while you wear this cloak.",
-    "short_description": "\\+1 AC | +1 to all Saving Throws",
+    "short_description": "Receive +1 AC & +1 to all Saving Throws",
     "modifiers": [
       {
         "target": "ac",
@@ -18,6 +18,22 @@
         "arithmetic_type": "bonus",
         "value": 1,
         "source_name": "Cloak of Protection"
+      }
+    ]
+  },
+  {
+    "name": "Amulet of Health",
+    "category": "Wondrous Item",
+    "rarity": "Rare",
+    "requires_attunement": true,
+    "description": "Your Constitution score is 19 while you wear this amulet. It has no effect on you if your Constitution is already 19 or higher.",
+    "short_description": "Your Constitution score is 19 while you wear this amulet. It has no effect on you if your Constitution is already 19 or higher.",
+    "modifiers": [
+      {
+        "target": "constitution",
+        "arithmetic_type": "override",
+        "value": 19,
+        "source_name": "Amulet of Health"
       }
     ]
   }
