@@ -3,7 +3,7 @@ __pycache__
 .venv_win
 user_data/
 storage
-*.db-shm
-*.db-wal
+dnd5e.db-shm
+dnd5e.db-wal
 
 # .vscode is not included as it contains data for the "bookmarks" extension
