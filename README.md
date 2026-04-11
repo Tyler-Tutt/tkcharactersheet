@@ -23,7 +23,7 @@
 ### Create Linux Virtual Environment:
     python3 -m venv .venv
 ## To run the UI (Powershell)
-flet run .\main_fley.py
+flet run .\main_flet.py
 
 # Dev Environment Routine:
 ## Bash Activate Linux Virutal Environment:
