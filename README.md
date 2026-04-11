@@ -47,3 +47,22 @@ flet run .\main_fley.py
 - Scrolling Text Area that records the last actions (took 5 damage, used spell, etc.)
 - Health and Mana (Spell Slot) Bars connected to HP-Text
 - Dice Roller with breakdown of what dice were rolled and why (not abstracted away)
+
+## Architecture
+sequenceDiagram
+    actor User
+    participant View as AbilityScoreContainer (UI)
+    participant PubSub as Flet Page PubSub
+    participant Controller as CharacterSheetController
+    participant Model as CharacterModel
+
+    User->>View: Types "18" in Strength field
+    View->>PubSub: send_all_on_topic(UI_ACTION, update_ability)
+    PubSub->>Controller: handle_subscribe_topic_ui_action()
+    Controller->>Model: ability_scores_list["strength"].base_score = 18
+    Note over Model: Model state is now updated
+    Controller->>PubSub: send_all_on_topic(MODEL_UPDATED)
+    PubSub->>View: update_card_data()
+    View->>Model: get_final_ability_score()
+    Model-->>View: returns 18
+    View->>User: UI Refreshes visually
