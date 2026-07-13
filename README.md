@@ -49,20 +49,13 @@ flet run .\main_flet.py
 - Dice Roller with breakdown of what dice were rolled and why (not abstracted away)
 
 ## Architecture
-sequenceDiagram
-    actor User
-    participant View as AbilityScoreContainer (UI)
-    participant PubSub as Flet Page PubSub
-    participant Controller as CharacterSheetController
-    participant Model as CharacterModel
-
-    User->>View: Types "18" in Strength field
-    View->>PubSub: send_all_on_topic(UI_ACTION, update_ability)
-    PubSub->>Controller: handle_subscribe_topic_ui_action()
-    Controller->>Model: ability_scores_list["strength"].base_score = 18
-    Note over Model: Model state is now updated
-    Controller->>PubSub: send_all_on_topic(MODEL_UPDATED)
-    PubSub->>View: update_card_data()
-    View->>Model: get_final_ability_score()
-    Model-->>View: returns 18
-    View->>User: UI Refreshes visually
+Models
+    - 
+Scripts
+Views
+    Components
+database.py
+dnd5e.db
+events.py
+main_flet.py
+rules_5e.py

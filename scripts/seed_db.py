@@ -2,14 +2,13 @@ import json
 import database # Works natively now!
 import os
 
-# We can use the simple 'os' module to reliably find the json file 
-# relative to where the command is run.
+# Use the simple 'os' module to reliably find the json file relative to where the command is run.
 JSON_PATH = os.path.join("data", "items.json")
 
 def seed_database():
     print("Seeding reference data from JSON...")
     
-    # 1. Ensure tables exist before we try to seed them
+    # 1. Ensure tables exist before trying to seed them
     database.init_db()
     
     # 2. Load JSON data
