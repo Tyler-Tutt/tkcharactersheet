@@ -8,7 +8,7 @@ class AbilityScoreContainer(ft.Container):
         super().__init__(
             padding=10,
             bgcolor=ft.Colors.LIGHT_GREEN,
-            border=ft.border.all(2, ft.Colors.OUTLINE),
+            border=ft.Border.all(2, ft.Colors.OUTLINE),
             border_radius=8
         )
         self.model = model
@@ -132,5 +132,7 @@ class AbilityScoreContainer(ft.Container):
             skill_name = checkbox.data["skill"]
             checkbox.value = self.model.ability_scores_list[self.ability_name].skills[skill_name].base_proficiency if is_edit else self.model.is_skill_proficient(self.ability_name, skill_name)
 
-        if self.page:
+        try:
             self.update()
+        except RuntimeError:
+            pass

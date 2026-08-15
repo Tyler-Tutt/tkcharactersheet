@@ -46,7 +46,7 @@ class CharacterSheetView(ft.Container):
         self.ability_score_containers = self._create_ability_score_containers()
         return ft.Container(
             bgcolor=ft.Colors.LIGHT_BLUE,
-            border=ft.border.all(2),
+            border=ft.Border.all(2),
             padding=5,
             content=ft.ResponsiveRow(
                 alignment=ft.MainAxisAlignment.SPACE_BETWEEN,

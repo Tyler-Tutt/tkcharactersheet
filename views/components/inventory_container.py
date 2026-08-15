@@ -7,14 +7,14 @@ class InventoryContainer(ft.Container):
         super().__init__(
             padding=10,
             bgcolor=ft.Colors.GREY_800,
-            border=ft.border.all(2, ft.Colors.OUTLINE),
+            border=ft.Border.all(2, ft.Colors.OUTLINE),
             border_radius=8
         )
         self.model = model
         self.item_list_column = ft.Column()
         
-        self.add_test_item_btn = ft.ElevatedButton(
-            text="Loot 'Item from _add_test_item'", 
+        self.add_test_item_btn = ft.Button(
+            content="Loot 'Item from _add_test_item'",
             on_click=self._add_test_item
         )
 
@@ -72,12 +72,16 @@ class InventoryContainer(ft.Container):
             self.item_list_column.controls.append(item_row)
             
         # THE FIX: Check if the component is mounted before updating
-        if self.page:
+        try:
             self.update()
+        except RuntimeError:
+            pass
             
     def set_edit_mode(self, topic=None, is_edit: bool = False):
         self.add_test_item_btn.visible = is_edit
         
         # THE FIX: Apply the safety check here too
-        if self.page:
+        try:
             self.update()
+        except RuntimeError:
+            pass

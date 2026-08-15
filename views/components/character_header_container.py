@@ -7,7 +7,7 @@ class CharacterHeaderContainer(ft.Container):
         super().__init__(
             padding=10,
             bgcolor=ft.Colors.CYAN_700,
-            border=ft.border.all(2, ft.Colors.OUTLINE),
+            border=ft.Border.all(2, ft.Colors.OUTLINE),
             border_radius=8
         )
         self.model = model
@@ -84,5 +84,7 @@ class CharacterHeaderContainer(ft.Container):
         self.race_field.read_only = read_only_state
         self.alignment_field.read_only = read_only_state
         self.experience_points_field.read_only = read_only_state
-        if self.page:
+        try:
             self.update()
+        except RuntimeError:
+            pass

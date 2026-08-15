@@ -56,7 +56,7 @@ class CharacterSheetController:
         self.page.appbar.update()
         
         mode_text = "Edit Mode" if self.is_edit_mode else "Viewing Mode"
-        self.page.open(ft.SnackBar(ft.Text(mode_text), duration=1500))
+        self.page.show_dialog(ft.SnackBar(ft.Text(mode_text), duration=1500))
 
     def get_view(self):
         '''
@@ -128,9 +128,9 @@ class CharacterSheetController:
                 modifiers=item_data.get("modifiers", [])
             )
             self.model.inventory.append(new_item)
-            self.page.open(ft.SnackBar(ft.Text(f"Added {item_name} to inventory!")))
+            self.page.show_dialog(ft.SnackBar(ft.Text(f"Added {item_name} to inventory!")))
         else:
-            self.page.open(ft.SnackBar(ft.Text(f"Item {item_name} not found in database."), bgcolor=ft.Colors.ERROR))
+            self.page.show_dialog(ft.SnackBar(ft.Text(f"Item {item_name} not found in database."), bgcolor=ft.Colors.ERROR))
 
     def _handle_toggle_attunement(self, message: dict):
         item_index = message["index"]
@@ -140,12 +140,12 @@ class CharacterSheetController:
     # --- External Save/Load ---
     def save_character(self, e):
         if not self.model.charactername or self.model.charactername == "Character Name":
-            self.page.open(ft.SnackBar(ft.Text("Save failed. Check character name."), bgcolor=ft.Colors.ERROR))
+            self.page.show_dialog(ft.SnackBar(ft.Text("Save failed. Check character name."), bgcolor=ft.Colors.ERROR))
             return
 
         character_data = self.model.convert_to_dictionary()
         database.save_character(self.model.charactername, character_data)
-        self.page.open(ft.SnackBar(ft.Text(f"Saved {self.model.charactername}!"), bgcolor=ft.Colors.GREEN_700))
+        self.page.show(ft.SnackBar(ft.Text(f"Saved {self.model.charactername}!"), bgcolor=ft.Colors.GREEN_700))
 
     def open_load_modal(self, e):
         '''
@@ -158,12 +158,12 @@ class CharacterSheetController:
             if char_data and self.model.load_from_dictionary(char_data):
                 self.page.pubsub.send_all_on_topic(PubSubTopic.MODEL_UPDATED, "load")
                 self.page.close(modal) 
-                self.page.open(ft.SnackBar(ft.Text(f"Loaded {char_to_load}!"))) 
+                self.page.show_dialog(ft.SnackBar(ft.Text(f"Loaded {char_to_load}!"))) 
             else:
-                self.page.open(ft.SnackBar(ft.Text(f"Failed to load {char_to_load}.")))
+                self.page.show_dialog(ft.SnackBar(ft.Text(f"Failed to load {char_to_load}.")))
 
         def handle_cancel():
-            self.page.close(modal)
+            self.page.close_dialog(modal)
 
         modal = LoadCharacterModal(character_list=character_list, on_load_confirm=handle_load, on_cancel=handle_cancel)
-        self.page.open(modal)
+        self.page.show_dialog(modal)

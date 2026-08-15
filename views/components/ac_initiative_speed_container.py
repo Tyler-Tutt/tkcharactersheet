@@ -7,7 +7,7 @@ class AcInitiativeSpeed(ft.Container):
         super().__init__(
             padding=10,
             bgcolor=ft.Colors.RED_200,
-            border=ft.border.all(2, ft.Colors.OUTLINE),
+            border=ft.Border.all(2, ft.Colors.OUTLINE),
             border_radius=8
         )
         self.model = model
@@ -52,5 +52,7 @@ class AcInitiativeSpeed(ft.Container):
     def set_edit_mode(self, topic=None, is_edit: bool = False):
         self.speed.read_only = not is_edit
         self.speed.value = str(self.model.base_speed) if is_edit else str(self.model.final_speed)
-        if self.page:
+        try:
             self.update()
+        except RuntimeError:
+            pass
