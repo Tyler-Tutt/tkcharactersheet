@@ -3,6 +3,7 @@ __pycache__
 .venv_win
 user_data/
 storage
+.flet/
 dnd5e.db-shm
 dnd5e.db-wal
 

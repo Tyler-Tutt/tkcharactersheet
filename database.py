@@ -1,11 +1,18 @@
 import sqlite3
 import json
 from contextlib import closing
+import os
 
+# ==========================================
+# IMPORTANT: FILE LOCATION
+# Flet 1.0+ automatically routes this file into a hidden sandbox folder at: .flet/storage/data/dnd5e.db
+# This simulates a mobile/desktop app's protected storage & routes it accordingly during packaging.
+# ==========================================
 DATABASE_FILE = "dnd5e.db"
 
 def get_db_connection():
     """Establishes and returns a connection to the SQLite database. i.e. Creates a database Connection object"""
+    print(f"--- DB LOCATION: {os.path.abspath(DATABASE_FILE)} ---")
     conn = sqlite3.connect(DATABASE_FILE)
     conn.row_factory = sqlite3.Row # Allows access to columns by name 
     conn.execute("PRAGMA journal_mode = WAL;")
