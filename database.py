@@ -1,7 +1,14 @@
+"""
+_summary_
+
+Returns:
+    _type_: _description_
+    boop: guy guy
+"""
+
 import sqlite3
 import json
 from contextlib import closing
-import os
 
 # ==========================================
 # IMPORTANT: FILE LOCATION
@@ -12,7 +19,6 @@ DATABASE_FILE = "dnd5e.db"
 
 def get_db_connection():
     """Establishes and returns a connection to the SQLite database. i.e. Creates a database Connection object"""
-    print(f"--- DB LOCATION: {os.path.abspath(DATABASE_FILE)} ---")
     conn = sqlite3.connect(DATABASE_FILE)
     conn.row_factory = sqlite3.Row # Allows access to columns by name 
     conn.execute("PRAGMA journal_mode = WAL;")

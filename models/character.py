@@ -104,6 +104,7 @@ class CharacterModel:
     def initiative(self) -> int:
         """Derived from FINAL Dexterity + any Initiative specific modifiers."""
         final_dex = self.get_final_ability_score("Dexterity")
+        #TODO Figure out where 'dex_mod' should live in file architecture
         dex_mod = (final_dex - rules.BASE_ABILITY_SCORE) // rules.ABILITY_MODIFIER_DIVISOR
         return self.calculate_stat(StatType.INITIATIVE, dex_mod)
 

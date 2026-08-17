@@ -1,3 +1,7 @@
+"""
+Default Stats & Default Stat Arithmetic
+"""
+
 from typing import Final, Dict, List
 from models.enums import StatType
 
