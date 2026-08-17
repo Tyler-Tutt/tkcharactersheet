@@ -145,7 +145,7 @@ class CharacterSheetController:
 
         character_data = self.model.convert_to_dictionary()
         database.save_character(self.model.charactername, character_data)
-        self.page.show(ft.SnackBar(ft.Text(f"Saved {self.model.charactername}!"), bgcolor=ft.Colors.GREEN_700))
+        self.page.show_dialog(ft.SnackBar(ft.Text(f"Saved {self.model.charactername}!"), bgcolor=ft.Colors.GREEN_700))
 
     def open_load_modal(self, e):
         '''
@@ -157,13 +157,13 @@ class CharacterSheetController:
             char_data = database.fetch_character(char_to_load)
             if char_data and self.model.load_from_dictionary(char_data):
                 self.page.pubsub.send_all_on_topic(PubSubTopic.MODEL_UPDATED, "load")
-                self.page.close(modal) 
+                self.page.pop_dialog() 
                 self.page.show_dialog(ft.SnackBar(ft.Text(f"Loaded {char_to_load}!"))) 
             else:
                 self.page.show_dialog(ft.SnackBar(ft.Text(f"Failed to load {char_to_load}.")))
 
         def handle_cancel():
-            self.page.close_dialog(modal)
+            self.page.pop_dialog()
 
         modal = LoadCharacterModal(character_list=character_list, on_load_confirm=handle_load, on_cancel=handle_cancel)
         self.page.show_dialog(modal)

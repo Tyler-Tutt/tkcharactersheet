@@ -15,7 +15,7 @@ def init_db():
     """
     Initializes the database schema (Strictly DDL (CREATE TABLES)) if they do not already exist.
     """
-    # closing() guarantees connection.close() is called when the block ends
+    # 'closing()' guarantees connection.close() is called when the block ends
     with closing(get_db_connection()) as connection:
         cursor = connection.cursor()
         
