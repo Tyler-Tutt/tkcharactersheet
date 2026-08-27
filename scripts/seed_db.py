@@ -1,3 +1,5 @@
+#TODO Figure out how/why this seed script doesn't seed to the same .db that is initialied
+
 import json
 import database # Works natively now!
 import os
